@@ -47,5 +47,8 @@ sketch
 .env.test.local
 .env.production.local
 
-### Vercel ###
+### Vercel 
 .vercel
+
+### Local build 
+dist
