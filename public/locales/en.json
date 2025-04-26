@@ -1,7 +1,7 @@
 {
   "pages": {
     "login": {
-      "title": "Sign in to your account",
+      "title": "Sign in",
       "signin": "Sign in",
       "signup": "Sign up",
       "divider": "or",

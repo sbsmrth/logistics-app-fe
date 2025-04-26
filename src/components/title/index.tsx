@@ -1,7 +1,7 @@
-import { Link } from "react-router";
-import Box from "@mui/material/Box";
+import { Link } from 'react-router';
+import Box from '@mui/material/Box';
 
-import { FinefoodsLogoIcon, FinefoodsLogoText } from "../icons/finefoods-logo";
+import { GeoTrackLogoIcon, GeoTrackLogoText } from '../icons/geotrack-logo';
 
 type TitleProps = {
   collapsed: boolean;
@@ -9,21 +9,31 @@ type TitleProps = {
 
 export const Title: React.FC<TitleProps> = ({ collapsed }) => {
   return (
-    <Link to="/">
+    <Link to="/" style={{ textDecoration: 'none' }}>
       <Box
         display="flex"
         alignItems="center"
-        gap={"12px"}
+        gap={'12px'}
         sx={{
-          color: "text.primary",
+          color: 'text.primary',
         }}
       >
         {collapsed ? (
-          <FinefoodsLogoIcon />
+          <GeoTrackLogoIcon
+            style={{
+              width: 30,
+              height: 30,
+            }}
+          />
         ) : (
           <>
-            <FinefoodsLogoIcon />
-            <FinefoodsLogoText />
+            <GeoTrackLogoIcon
+              style={{
+                width: 30,
+                height: 30,
+              }}
+            />
+            <GeoTrackLogoText fontWeight={800} variant="h6" />
           </>
         )}
       </Box>
