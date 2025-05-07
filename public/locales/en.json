@@ -522,7 +522,8 @@
     "tagFilterDescription": "Use tags to filter your search",
     "all": "All",
     "productSearch": "Product Search",
-    "addNewStore": "Add New Store"
+    "addNewStore": "Add New Store",
+    "uploadStore": "Load from file"
   },
   "users": {
     "users": "Customers",
