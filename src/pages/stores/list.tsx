@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { RefineListView, StoreTable, AllStoresMap } from "../../components";
+import { SheetIcon } from "../../components/icons/sheet";
 
 type View = "table" | "map";
 
@@ -16,7 +17,7 @@ export const StoreList = () => {
     return view || "table";
   });
 
-  const { replace } = useNavigation();
+  const { replace, push } = useNavigation();
   const t = useTranslate();
 
   const handleViewChange = (
@@ -55,6 +56,16 @@ export const StoreList = () => {
         >
           {t("stores.addNewStore")}
         </CreateButton>,
+        <CreateButton
+          {...props.createButtonProps}
+          key="upload"
+          size="medium"
+          sx={{ height: "40px" }}
+          color="secondary"
+          startIcon={<SheetIcon />}
+          onClick={() => push("/stores/upload")}>
+          {t("stores.uploadStore")}
+        </CreateButton>
       ]}
     >
       {view === "table" && <StoreTable />}

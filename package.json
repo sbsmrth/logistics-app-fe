@@ -40,6 +40,7 @@
     "@tanstack/react-table": "^8.2.6",
     "@uiw/react-md-editor": "^3.19.5",
     "axios": "^1.6.2",
+    "csv-parser": "^3.2.0",
     "dayjs": "^1.10.7",
     "finefoods-material-ui": "file:",
     "google-map-react": "^2.1.10",
