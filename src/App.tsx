@@ -37,6 +37,7 @@ import { CategoryList } from "./pages/categories";
 import { ColorModeContextProvider } from "./contexts";
 import { Header, Title } from "./components";
 import { useAutoLoginForDemo } from "./hooks";
+import { StoreUpload } from "./pages/stores/upload";
 
 const API_URL = "https://api.finefoods.refine.dev";
 
@@ -190,6 +191,7 @@ const App: React.FC = () => {
                   <Route path="/stores">
                     <Route index element={<StoreList />} />
                     <Route path="new" element={<StoreCreate />} />
+                    <Route path="upload" element={<StoreUpload />} />
                     <Route path=":id/edit" element={<StoreEdit />} />
                   </Route>
 
