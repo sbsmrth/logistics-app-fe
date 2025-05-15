@@ -29,21 +29,44 @@
       },
       "buttons": {
         "submit": "Send reset instructions"
-      }
+      },
+      "success": "We have sent you an email with instructions to reset your password."
     },
     "register": {
       "title": "Sign up for your account",
       "fields": {
         "email": "Email",
-        "password": "Password"
+        "password": "Password",
+        "fullName": "Full Name"
       },
       "errors": {
-        "validEmail": "Invalid email address"
+        "validEmail": "Invalid email address",
+        "validUsername": "Invalid username",
+        "validPassword": "Invalid password",
+        "requiredName": "Full name is required",
+        "generic": "Error while creating your account. Please try again later"
       },
       "buttons": {
         "submit": "Register",
         "haveAccount": "Have an account?"
-      }
+      },
+      "success": "Your acount has been created"
+    },
+    "verify": {
+      "title": "Verify your email",
+      "subtitle": "We have sent a verification code to your email address.",
+      "fields": {
+        "email": "Email",
+        "code": "Verification code"
+      },
+      "errors": {
+        "validCode": "Invalid verification code"
+      },
+      "buttons": {
+        "submit": "Verify",
+        "resendCode": "Resend code"
+      },
+      "success": "Your email has been verified"
     },
     "updatePassword": {
       "title": "Update password",

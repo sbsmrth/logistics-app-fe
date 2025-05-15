@@ -1,31 +1,33 @@
-import { useForm } from "@refinedev/react-hook-form";
-import * as React from "react";
+import { useForm } from '@refinedev/react-hook-form';
+import * as React from 'react';
 import {
   type BaseRecord,
   type HttpError,
   useForgotPassword,
   useLink,
+  useNotification,
   useRouterContext,
   useRouterType,
   useTranslate,
-} from "@refinedev/core";
-import { ThemedTitleV2 } from "@refinedev/mui";
-import { layoutStyles, titleStyles } from "./styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
-import MuiLink from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import type { BoxProps } from "@mui/material/Box";
-import type { CardContentProps } from "@mui/material/CardContent";
+} from '@refinedev/core';
+import { ThemedTitleV2 } from '@refinedev/mui';
+import { layoutStyles, titleStyles } from './styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Container from '@mui/material/Container';
+import MuiLink from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import type { BoxProps } from '@mui/material/Box';
+import type { CardContentProps } from '@mui/material/CardContent';
 import type {
   ForgotPasswordFormTypes,
   ForgotPasswordPageProps,
-} from "@refinedev/core";
-import type { FormPropsType } from "../index";
+} from '@refinedev/core';
+import type { FormPropsType } from '../index';
+import { useNavigation } from '@refinedev/core';
 
 type ForgotPasswordProps = ForgotPasswordPageProps<
   BoxProps,
@@ -59,25 +61,28 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
   const translate = useTranslate();
   const routerType = useRouterType();
   const Link = useLink();
+  const { push } = useNavigation();
+  const { open } = useNotification();
+
   const { Link: LegacyLink } = useRouterContext();
 
-  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
+  const ActiveLink = routerType === 'legacy' ? LegacyLink : Link;
 
   const PageTitle =
     title === false ? null : (
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "32px",
-          fontSize: "20px",
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '32px',
+          fontSize: '20px',
         }}
       >
         {title ?? (
           <ThemedTitleV2
             collapsed={false}
             wrapperStyles={{
-              gap: "8px",
+              gap: '8px',
             }}
           />
         )}
@@ -86,7 +91,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
 
   const Content = (
     <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ p: "32px", "&:last-child": { pb: "32px" } }}>
+      <CardContent sx={{ p: '32px', '&:last-child': { pb: '32px' } }}>
         <Typography
           component="h1"
           variant="h5"
@@ -95,36 +100,66 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
           color="primary"
           fontWeight={700}
         >
-          {translate("pages.forgotPassword.title", "Forgot your password?")}
+          {translate('pages.forgotPassword.title', 'Forgot your password?')}
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit((data) => {
+          onSubmit={handleSubmit(data => {
             if (onSubmit) {
               return onSubmit(data);
             }
 
-            return mutate({ ...mutationVariables, ...data });
+            return mutate(
+              { ...mutationVariables, ...data },
+              {
+                onSuccess: ({ success }) => {
+                  if (success) {
+                    open!({
+                      type: 'success',
+                      message: translate(
+                        'pages.forgotPassword.success',
+                        'Check your email for the reset instructions'
+                      ),
+                    });
+                    push('login');
+                  } else {
+                    open!({
+                      type: 'error',
+                      message: translate(
+                        'pages.forgotPassword.errors.validEmail',
+                        'Something went wrong'
+                      ),
+                    });
+                  }
+                },
+                onError: error => {
+                  open!({
+                    type: 'error',
+                    message: error.message,
+                  });
+                },
+              }
+            );
           })}
         >
           <TextField
-            {...register("email", {
+            {...register('email', {
               required: translate(
-                "pages.forgotPassword.errors.requiredEmail",
-                "Email is required"
+                'pages.forgotPassword.errors.requiredEmail',
+                'Email is required'
               ),
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 message: translate(
-                  "pages.register.errors.validEmail",
-                  "Invalid email address"
+                  'pages.register.errors.validEmail',
+                  'Invalid email address'
                 ),
               },
             })}
             id="email"
             margin="normal"
             fullWidth
-            label={translate("pages.forgotPassword.fields.email", "Email")}
+            label={translate('pages.forgotPassword.fields.email', 'Email')}
             name="email"
             type="email"
             error={!!errors.email}
@@ -134,16 +169,16 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
             }}
           />
           {loginLink ?? (
-            <Box textAlign="right" sx={{ mt: "24px" }}>
+            <Box textAlign="right" sx={{ mt: '24px' }}>
               <Typography variant="body2" component="span" fontSize="12px">
                 {translate(
-                  "pages.forgotPassword.buttons.haveAccount",
+                  'pages.forgotPassword.buttons.haveAccount',
                   translate(
-                    "pages.register.buttons.haveAccount",
-                    "Have an account? "
+                    'pages.register.buttons.haveAccount',
+                    'Have an account? '
                   )
                 )}
-              </Typography>{" "}
+              </Typography>{' '}
               <MuiLink
                 variant="body2"
                 component={ActiveLink}
@@ -154,8 +189,8 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
                 color="primary.light"
               >
                 {translate(
-                  "pages.forgotPassword.signin",
-                  translate("pages.login.signin", "Sign in")
+                  'pages.forgotPassword.signin',
+                  translate('pages.login.signin', 'Sign in')
                 )}
               </MuiLink>
             </Box>
@@ -164,12 +199,12 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: "24px" }}
+            sx={{ mt: '24px' }}
             disabled={isLoading}
           >
             {translate(
-              "pages.forgotPassword.buttons.submit",
-              "Send reset instructions"
+              'pages.forgotPassword.buttons.submit',
+              'Send reset instructions'
             )}
           </Button>
         </Box>
@@ -184,13 +219,13 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordProps> = ({
           component="main"
           maxWidth="xs"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            minHeight: "100dvh",
-            padding: "16px",
-            width: "100%",
-            maxWidth: "400px",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: '100dvh',
+            padding: '16px',
+            width: '100%',
+            maxWidth: '400px',
           }}
         >
           {renderContent ? (
