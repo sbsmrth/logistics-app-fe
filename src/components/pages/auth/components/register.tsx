@@ -1,5 +1,5 @@
-import { useForm } from "@refinedev/react-hook-form";
-import * as React from "react";
+import { useForm } from '@refinedev/react-hook-form';
+import * as React from 'react';
 import {
   type RegisterFormTypes,
   type RegisterPageProps,
@@ -11,28 +11,32 @@ import {
   useRouterType,
   useLink,
   useRegister,
-} from "@refinedev/core";
-import { ThemedTitleV2 } from "@refinedev/mui";
-import { layoutStyles, titleStyles } from "./styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
-import MuiLink from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import type { BoxProps } from "@mui/material/Box";
-import type { CardContentProps } from "@mui/material/CardContent";
-import type { FormPropsType } from "../index";
+  useNotification,
+  useGo,
+} from '@refinedev/core';
+import { ThemedTitleV2 } from '@refinedev/mui';
+import { layoutStyles, titleStyles } from './styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Container from '@mui/material/Container';
+import MuiLink from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import type { BoxProps } from '@mui/material/Box';
+import type { CardContentProps } from '@mui/material/CardContent';
+import type { FormPropsType } from '../index';
 
 type RegisterProps = RegisterPageProps<
   BoxProps,
   CardContentProps,
   FormPropsType
 >;
+
+interface MyRegisterFormTypes extends RegisterFormTypes {
+  fullname?: string;
+}
 
 /**
  * The register page will be used to register new users. You can use the following props for the <AuthPage> component when the type is "register".
@@ -43,7 +47,6 @@ export const RegisterPage: React.FC<RegisterProps> = ({
   wrapperProps,
   contentProps,
   renderContent,
-  providers,
   formProps,
   title,
   hideForm,
@@ -54,94 +57,49 @@ export const RegisterPage: React.FC<RegisterProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<BaseRecord, HttpError, RegisterFormTypes>({
+  } = useForm<BaseRecord, HttpError, MyRegisterFormTypes>({
     ...useFormProps,
   });
 
   const authProvider = useActiveAuthProvider();
-  const { mutate: registerMutate, isLoading } = useRegister<RegisterFormTypes>({
-    v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
-  });
+  const { mutate: registerMutate, isLoading } =
+    useRegister<MyRegisterFormTypes>({
+      v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
+    });
   const translate = useTranslate();
   const routerType = useRouterType();
   const Link = useLink();
   const { Link: LegacyLink } = useRouterContext();
+  const go = useGo();
 
-  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
+  const { open } = useNotification();
+
+  const ActiveLink = routerType === 'legacy' ? LegacyLink : Link;
 
   const PageTitle =
     title === false ? null : (
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "32px",
-          fontSize: "20px",
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '32px',
+          fontSize: '20px',
         }}
       >
         {title ?? (
           <ThemedTitleV2
             collapsed={false}
             wrapperStyles={{
-              gap: "8px",
+              gap: '8px',
             }}
           />
         )}
       </div>
     );
 
-  const renderProviders = () => {
-    if (providers && providers.length > 0) {
-      return (
-        <>
-          <Stack spacing={1}>
-            {providers.map((provider: any) => {
-              return (
-                <Button
-                  key={provider.name}
-                  color="secondary"
-                  fullWidth
-                  variant="outlined"
-                  sx={{
-                    color: "primary.light",
-                    borderColor: "primary.light",
-                    textTransform: "none",
-                  }}
-                  onClick={() =>
-                    registerMutate({
-                      ...mutationVariables,
-                      providerName: provider.name,
-                    })
-                  }
-                  startIcon={provider.icon}
-                >
-                  {provider.label}
-                </Button>
-              );
-            })}
-          </Stack>
-          {!hideForm && (
-            <Divider
-              sx={{
-                fontSize: "12px",
-                marginY: "16px",
-              }}
-            >
-              {translate(
-                "pages.register.divider",
-                translate("pages.login.divider", "or")
-              )}
-            </Divider>
-          )}
-        </>
-      );
-    }
-    return null;
-  };
-
   const Content = (
     <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ p: "32px", "&:last-child": { pb: "32px" } }}>
+      <CardContent sx={{ p: '32px', '&:last-child': { pb: '32px' } }}>
         <Typography
           component="h1"
           variant="h5"
@@ -150,59 +108,108 @@ export const RegisterPage: React.FC<RegisterProps> = ({
           color="primary"
           fontWeight={700}
         >
-          {translate("pages.register.title", "Sign up for your account")}
+          {translate('pages.register.title', 'Sign up for your account')}
         </Typography>
-        {renderProviders()}
         {!hideForm && (
           <Box
             component="form"
-            onSubmit={handleSubmit((data) => {
+            onSubmit={handleSubmit(data => {
               if (onSubmit) {
+                console.log('data', data);
                 return onSubmit(data);
               }
 
-              return registerMutate({ ...mutationVariables, ...data });
+              registerMutate(
+                { ...mutationVariables, ...data },
+                {
+                  onSuccess: (data: any) => {
+                    const { user, success } = data;
+
+                    if (success) {
+                      open!({
+                        type: 'success',
+                        message: translate(
+                          'pages.register.success',
+                          'Registration successful'
+                        ),
+                      });
+                      go({
+                        to: '/verify',
+                        query: {
+                          email: user,
+                        },
+                        type: 'push',
+                      });
+                    }
+                  },
+                }
+              );
             })}
           >
             <TextField
-              {...register("email", {
+              {...register('fullname', {
                 required: translate(
-                  "pages.register.errors.requiredEmail",
-                  "Email is required"
+                  'pages.register.errors.requiredName',
+                  'Name is required'
+                ),
+                pattern: {
+                  value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]+)+$/,
+                  message: translate(
+                    'pages.register.errors.validUsername',
+                    'Invalid username'
+                  ),
+                },
+              })}
+              id="fullname"
+              margin="normal"
+              fullWidth
+              label={translate('pages.register.fields.fullName', 'Full Name')}
+              error={!!errors.fullname}
+              helperText={errors['fullname'] ? errors['fullname'].message : ''}
+              name="fullname"
+              sx={{
+                mb: 3,
+              }}
+              autoComplete="fullname"
+            />
+            <TextField
+              {...register('email', {
+                required: translate(
+                  'pages.register.errors.requiredEmail',
+                  'Email is required'
                 ),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: translate(
-                    "pages.register.errors.validEmail",
-                    "Invalid email address"
+                    'pages.register.errors.validEmail',
+                    'Invalid email address'
                   ),
                 },
               })}
               id="email"
               margin="normal"
               fullWidth
-              label={translate("pages.register.email", "Email")}
+              label={translate('pages.register.email', 'Email')}
               error={!!errors.email}
-              helperText={errors["email"] ? errors["email"].message : ""}
+              helperText={errors['email'] ? errors['email'].message : ''}
               name="email"
-              autoComplete="email"
               sx={{
                 mt: 0,
               }}
             />
             <TextField
-              {...register("password", {
+              {...register('password', {
                 required: translate(
-                  "pages.register.errors.requiredPassword",
-                  "Password is required"
+                  'pages.register.errors.requiredPassword',
+                  'Password is required'
                 ),
               })}
               id="password"
               margin="normal"
               fullWidth
               name="password"
-              label={translate("pages.register.fields.password", "Password")}
-              helperText={errors["password"] ? errors["password"].message : ""}
+              label={translate('pages.register.fields.password', 'Password')}
+              helperText={errors['password'] ? errors['password'].message : ''}
               error={!!errors.password}
               type="password"
               placeholder="●●●●●●●●"
@@ -217,10 +224,10 @@ export const RegisterPage: React.FC<RegisterProps> = ({
               variant="contained"
               disabled={isLoading}
               sx={{
-                mt: "24px",
+                mt: '24px',
               }}
             >
-              {translate("pages.register.signup", "Sign up")}
+              {translate('pages.register.signup', 'Sign up')}
             </Button>
           </Box>
         )}
@@ -230,16 +237,16 @@ export const RegisterPage: React.FC<RegisterProps> = ({
             justifyContent="flex-end"
             alignItems="center"
             sx={{
-              mt: "24px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              mt: '24px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             <Typography variant="body2" component="span" fontSize="12px">
               {translate(
-                "pages.register.buttons.haveAccount",
-                translate("pages.login.buttons.haveAccount", "Have an account?")
+                'pages.register.buttons.haveAccount',
+                translate('pages.login.buttons.haveAccount', 'Have an account?')
               )}
             </Typography>
             <MuiLink
@@ -253,8 +260,8 @@ export const RegisterPage: React.FC<RegisterProps> = ({
               fontWeight="bold"
             >
               {translate(
-                "pages.register.signin",
-                translate("pages.login.signin", "Sign in")
+                'pages.register.signin',
+                translate('pages.login.signin', 'Sign in')
               )}
             </MuiLink>
           </Box>
@@ -268,23 +275,23 @@ export const RegisterPage: React.FC<RegisterProps> = ({
       <Container
         component="main"
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: hideForm ? "flex-start" : "center",
-          alignItems: "center",
-          minHeight: "100dvh",
-          padding: "16px",
-          width: "100%",
-          maxWidth: "400px",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: hideForm ? 'flex-start' : 'center',
+          alignItems: 'center',
+          minHeight: '100dvh',
+          padding: '16px',
+          width: '100%',
+          maxWidth: '400px',
         }}
       >
         <Box
           sx={{
-            width: "100%",
-            maxWidth: "400px",
-            display: "flex",
-            flexDirection: "column",
-            paddingTop: hideForm ? "15dvh" : 0,
+            width: '100%',
+            maxWidth: '400px',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: hideForm ? '15dvh' : 0,
           }}
         >
           {renderContent ? (

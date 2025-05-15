@@ -12,6 +12,8 @@ import {
   useRouterContext,
   useRouterType,
   useLink,
+  useApiUrl,
+  useGo,
 } from '@refinedev/core';
 import { ThemedTitleV2 } from '@refinedev/mui';
 import { layoutStyles, titleStyles } from './styles';
@@ -19,10 +21,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { MuiOtpInput } from 'mui-one-time-password-input';
 import MuiLink from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -30,6 +31,14 @@ import Typography from '@mui/material/Typography';
 import type { BoxProps } from '@mui/material/Box';
 import type { CardContentProps } from '@mui/material/CardContent';
 import type { FormPropsType } from '../index';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useState } from 'react';
+import { enableAutoLogin } from '../../../../hooks';
+import { TOKEN_KEY } from '../../../../authProvider';
 
 type LoginProps = LoginPageProps<BoxProps, CardContentProps, FormPropsType>;
 
@@ -41,7 +50,6 @@ export const LoginPage: React.FC<LoginProps> = ({
   providers,
   registerLink,
   forgotPasswordLink,
-  rememberMe,
   contentProps,
   wrapperProps,
   renderContent,
@@ -70,6 +78,14 @@ export const LoginPage: React.FC<LoginProps> = ({
   const { Link: LegacyLink } = useRouterContext();
 
   const ActiveLink = routerType === 'legacy' ? LegacyLink : Link;
+
+  const [open, setOpen] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(
+    '6823f3d8fb805a6d9dac4f85'
+  );
+
+  const apiUrl = useApiUrl();
 
   const PageTitle =
     title === false ? null : (
@@ -109,7 +125,18 @@ export const LoginPage: React.FC<LoginProps> = ({
                     textTransform: 'none',
                   }}
                   onClick={() =>
-                    login({ ...mutationVariables, providerName: provider.name })
+                    login(
+                      { ...mutationVariables, providerName: provider.name },
+                      {
+                        onSuccess: (data: any) => {
+                          const { success, userId } = data;
+                          if (success) {
+                            setOpen(true);
+                            // setCurrentUserId(userId);
+                          }
+                        },
+                      }
+                    )
                   }
                   startIcon={provider.icon}
                 >
@@ -156,7 +183,18 @@ export const LoginPage: React.FC<LoginProps> = ({
                 return onSubmit(data);
               }
 
-              return login({ ...mutationVariables, ...data });
+              return login(
+                { ...mutationVariables, ...data },
+                {
+                  onSuccess: (data: any) => {
+                    const { success, userId } = data;
+                    if (success) {
+                      setOpen(true);
+                      // setCurrentUserId(userId);
+                    }
+                  },
+                }
+              );
             })}
           >
             <TextField
@@ -231,7 +269,6 @@ export const LoginPage: React.FC<LoginProps> = ({
               variant="contained"
               disabled={isLoading}
               sx={{ mt: '24px', fontWeight: 800 }}
-              
             >
               {translate('pages.login.signin', 'Sign in')}
             </Button>
@@ -275,42 +312,108 @@ export const LoginPage: React.FC<LoginProps> = ({
     </Card>
   );
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOtpChange = (value: string) => {
+    setOtp(value);
+  };
+
+  const go = useGo();
+
+  const handle2faSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    handleClose();
+
+    const res = await fetch(apiUrl + '/auth/verify-code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code: otp,
+        id: currentUserId,
+      }),
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    enableAutoLogin();
+
+    localStorage.setItem(TOKEN_KEY, data.token);
+
+    go({
+      to: '/',
+      type: 'push',
+    });
+  };
+
   return (
-    <FormProvider {...methods}>
-      <Box component="div" style={layoutStyles} {...(wrapperProps ?? {})}>
-        <Container
-          component="main"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: hideForm ? 'flex-start' : 'center',
-            alignItems: 'center',
-            minHeight: '100dvh',
-            padding: '16px',
-            width: '100%',
-            maxWidth: '400px',
-          }}
-        >
-          <Box
+    <>
+      <FormProvider {...methods}>
+        <Box component="div" style={layoutStyles} {...(wrapperProps ?? {})}>
+          <Container
+            component="main"
             sx={{
-              width: '100%',
-              maxWidth: '400px',
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: hideForm ? '15dvh' : 0,
+              justifyContent: hideForm ? 'flex-start' : 'center',
+              alignItems: 'center',
+              minHeight: '100dvh',
+              padding: '16px',
+              width: '100%',
+              maxWidth: '400px',
             }}
           >
-            {renderContent ? (
-              renderContent(Content, PageTitle)
-            ) : (
-              <>
-                {PageTitle}
-                {Content}
-              </>
-            )}
-          </Box>
-        </Container>
-      </Box>
-    </FormProvider>
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '400px',
+                display: 'flex',
+                flexDirection: 'column',
+                paddingTop: hideForm ? '15dvh' : 0,
+              }}
+            >
+              {renderContent ? (
+                renderContent(Content, PageTitle)
+              ) : (
+                <>
+                  {PageTitle}
+                  {Content}
+                </>
+              )}
+            </Box>
+          </Container>
+        </Box>
+      </FormProvider>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          paper: {
+            component: 'form',
+            onSubmit: handle2faSubmit,
+          },
+        }}
+      >
+        <DialogTitle>2Factor Verification</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 3 }}>
+            Please enter the one-time password sent to your email or phone.
+          </DialogContentText>
+          <MuiOtpInput value={otp} onChange={handleOtpChange} length={6} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit" disabled={otp.length < 6}>
+            Verify
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };

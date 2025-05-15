@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
-  UpdatePasswordFormTypes,
+  // UpdatePasswordFormTypes,
   useNavigation,
   useTranslate,
   useUpdate,
-  useUpdatePassword,
+  // useUpdatePassword,
 } from "@refinedev/core";
 import { NumberField, useDataGrid } from "@refinedev/mui";
 import CheckOutlined from "@mui/icons-material/CheckOutlined";
@@ -25,15 +25,15 @@ export const RecentOrders: React.FC = () => {
   const { mutate } = useUpdate({
     resource: "orders",
   });
-  const { mutate: updatePassword } =
-    useUpdatePassword<Record<string, string>>();
+  // const { mutate: updatePassword } =
+  //   useUpdatePassword<Record<string, string>>();
 
-  useEffect(() => {
-    updatePassword({
-      redirectPath: "/custom-url",
-      query: "?foo=bar",
-    });
-  }, [updatePassword]);
+  // useEffect(() => {
+  //   updatePassword({
+  //     redirectPath: "/custom-url",
+  //     query: "?foo=bar",
+  //   });
+  // }, [updatePassword]);
 
   const { dataGridProps } = useDataGrid<IOrder>({
     resource: "orders",

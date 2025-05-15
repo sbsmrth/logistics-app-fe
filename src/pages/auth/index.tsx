@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   AuthPage as MUIAuthPage,
-  type AuthProps,
+  ExtendedAuthProps
 } from '../../components/pages/auth';
 import { Link } from 'react-router';
 import Box from '@mui/material/Box';
@@ -51,7 +51,7 @@ const renderAuthContent = (content: React.ReactNode) => {
   );
 };
 
-export const AuthPage: React.FC<AuthProps> = ({ type, formProps }) => {
+export const AuthPage: React.FC<ExtendedAuthProps> = ({ type, formProps }) => {
   return (
     <MUIAuthPage
       type={type}

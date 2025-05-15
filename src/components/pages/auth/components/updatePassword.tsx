@@ -1,5 +1,5 @@
-import { useForm } from "@refinedev/react-hook-form";
-import * as React from "react";
+import { useForm } from '@refinedev/react-hook-form';
+import * as React from 'react';
 import {
   type UpdatePasswordFormTypes,
   type UpdatePasswordPageProps,
@@ -8,19 +8,26 @@ import {
   type HttpError,
   useTranslate,
   useUpdatePassword,
-} from "@refinedev/core";
-import { ThemedTitleV2 } from "@refinedev/mui";
-import { layoutStyles, titleStyles } from "./styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import type { BoxProps } from "@mui/material/Box";
-import type { CardContentProps } from "@mui/material/CardContent";
-import type { FormPropsType } from "../index";
+  useParsed,
+  useNotification,
+  useGo,
+} from '@refinedev/core';
+import { ThemedTitleV2 } from '@refinedev/mui';
+import { layoutStyles, titleStyles } from './styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import type { BoxProps } from '@mui/material/Box';
+import type { CardContentProps } from '@mui/material/CardContent';
+import type { FormPropsType } from '../index';
+
+type CustomUpdatePasswordFormTypes = UpdatePasswordFormTypes & {
+  token?: string;
+};
 
 type UpdatePasswordProps = UpdatePasswordPageProps<
   BoxProps,
@@ -52,27 +59,35 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
 
   const authProvider = useActiveAuthProvider();
   const { mutate: update, isLoading } =
-    useUpdatePassword<UpdatePasswordFormTypes>({
+    useUpdatePassword<CustomUpdatePasswordFormTypes>({
       v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
     });
 
   const translate = useTranslate();
 
+  const parsed = useParsed<{ token: string }>();
+
+  const token = parsed.params?.token ?? '';
+
+  const go = useGo();
+
+  const { open } = useNotification();
+
   const PageTitle =
     title === false ? null : (
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "32px",
-          fontSize: "20px",
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '32px',
+          fontSize: '20px',
         }}
       >
         {title ?? (
           <ThemedTitleV2
             collapsed={false}
             wrapperStyles={{
-              gap: "8px",
+              gap: '8px',
             }}
           />
         )}
@@ -81,7 +96,7 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
 
   const Content = (
     <Card {...(contentProps ?? {})}>
-      <CardContent sx={{ p: "32px", "&:last-child": { pb: "32px" } }}>
+      <CardContent sx={{ p: '32px', '&:last-child': { pb: '32px' } }}>
         <Typography
           component="h1"
           variant="h5"
@@ -90,23 +105,47 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
           color="primary"
           fontWeight={700}
         >
-          {translate("pages.updatePassword.title", "Set New Password")}
+          {translate('pages.updatePassword.title', 'Set New Password')}
         </Typography>
         <Box
           component="form"
-          onSubmit={handleSubmit((data) => {
+          onSubmit={handleSubmit(data => {
             if (onSubmit) {
               return onSubmit(data);
             }
 
-            return update({ ...mutationVariables, ...data });
+            return update(
+              { ...mutationVariables, ...data, token },
+              {
+                onSuccess: (data: any) => {
+                  const { success } = data;
+                  if (success) {
+                    open!({
+                      type: 'success',
+                      message: translate(
+                        'pages.updatePassword.success',
+                        'Password updated successfully'
+                      ),
+                    });
+
+                    go({
+                      to: '/login',
+                      type: 'push',
+                    });
+                  }
+                },
+                onError: error => {
+                  console.error('Error updating password:', error);
+                },
+              }
+            );
           })}
         >
           <TextField
-            {...register("password", {
+            {...register('password', {
               required: translate(
-                "pages.updatePassword.errors.requiredPassword",
-                "Password required"
+                'pages.updatePassword.errors.requiredPassword',
+                'Password required'
               ),
             })}
             id="password"
@@ -114,8 +153,8 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
             fullWidth
             name="password"
             label={translate(
-              "pages.updatePassword.fields.password",
-              "New Password"
+              'pages.updatePassword.fields.password',
+              'New Password'
             )}
             helperText={errors?.password?.message}
             error={!!errors?.password}
@@ -128,16 +167,16 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
           />
 
           <TextField
-            {...register("confirmPassword", {
+            {...register('confirmPassword', {
               required: translate(
-                "pages.updatePassword.errors.requiredConfirmPassword",
-                "Confirm Password is required"
+                'pages.updatePassword.errors.requiredConfirmPassword',
+                'Confirm Password is required'
               ),
               validate: (value?: string) => {
-                if (watch("password") !== value) {
+                if (watch('password') !== value) {
                   return translate(
-                    "pages.updatePassword.errors.confirmPasswordNotMatch",
-                    "Passwords do not match"
+                    'pages.updatePassword.errors.confirmPasswordNotMatch',
+                    'Passwords do not match'
                   );
                 }
                 return true;
@@ -148,8 +187,8 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
             fullWidth
             name="confirmPassword"
             label={translate(
-              "pages.updatePassword.fields.confirmPassword",
-              "Confirm New Password"
+              'pages.updatePassword.fields.confirmPassword',
+              'Confirm New Password'
             )}
             helperText={errors?.confirmPassword?.message}
             error={!!errors?.confirmPassword}
@@ -166,11 +205,11 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
             fullWidth
             variant="contained"
             sx={{
-              mt: "24px",
+              mt: '24px',
             }}
             disabled={isLoading}
           >
-            {translate("pages.updatePassword.buttons.submit", "Update")}
+            {translate('pages.updatePassword.buttons.submit', 'Update')}
           </Button>
         </Box>
       </CardContent>
@@ -184,13 +223,13 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
           component="main"
           maxWidth="xs"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            minHeight: "100dvh",
-            padding: "16px",
-            width: "100%",
-            maxWidth: "400px",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: '100dvh',
+            padding: '16px',
+            width: '100%',
+            maxWidth: '400px',
           }}
         >
           {renderContent ? (
