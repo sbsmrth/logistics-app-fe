@@ -92,19 +92,30 @@ export interface IOrder {
 export interface IProduct {
   id: number;
   name: string;
-  isActive: boolean;
   description: string;
-  images: (IFile & { thumbnailUrl?: string })[];
+  // images: (IFile & { thumbnailUrl?: string })[];
   createdAt: string;
-  price: number;
-  category: ICategory;
-  stock: number;
+  // price: number;
+  categoryId: number;
+  // stock: number;
+
+  // Nuevos campos
+  imageUrl: string; // URL de la imagen del producto
+  weight: number; // en kilogramos
+  dimensionsCm: string; // formato sugerido: "30x20x10"
+  dateOfExpiration: string; // formato ISO (YYYY-MM-DD)
+  requiredRefrigeration: boolean;
+  isFragile: boolean;
+  barCode: string;
+  status: string;
+  unitPrice: number;
 }
 
 export interface ICategory {
   id: number;
-  title: string;
-  isActive: boolean;
+  name: string;
+  description: string;
+  isActive?: boolean;
 }
 
 export interface IOrderFilterVariables {
@@ -171,3 +182,4 @@ export type IVehicle = {
 export type Nullable<T> = {
   [P in keyof T]: T[P] | null;
 };
+

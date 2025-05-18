@@ -40,6 +40,7 @@ import { useAutoLoginForDemo } from './hooks';
 import { StoreUpload } from './pages/stores/upload';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
+// const API_URL = 'https://api.finefoods.refine.dev';
 
 const App: React.FC = () => {
   // This hook is used to automatically login the user.
