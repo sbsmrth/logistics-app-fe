@@ -44,7 +44,8 @@ export const ProductListTable = (props: Props) => {
                 width: 32,
                 height: 32,
               }}
-              src={row.images[0]?.thumbnailUrl || row.images[0]?.url}
+              // src={row.images[0]?.thumbnailUrl || row.images[0]?.url}
+              src={row.imageUrl}
               alt={row.name}
             />
           );
@@ -68,7 +69,7 @@ export const ProductListTable = (props: Props) => {
         sortable: false,
       },
       {
-        field: "price",
+        field: "unitPrice",
         type: "number",
         headerName: t("products.fields.price"),
         width: 120,
@@ -79,7 +80,7 @@ export const ProductListTable = (props: Props) => {
         renderCell: function render({ row }) {
           return (
             <NumberField
-              value={row.price}
+              value={row.unitPrice}
               options={{
                 currency: "USD",
                 style: "currency",
@@ -97,19 +98,19 @@ export const ProductListTable = (props: Props) => {
         display: "flex",
         renderCell: function render({ row }) {
           const category = props.categories.find(
-            (category) => category.id === row.category.id,
+            (category) => category.id === row.categoryId,
           );
 
-          return <Typography>{category?.title}</Typography>;
+          return <Typography>{category?.name}</Typography>;
         },
       },
       {
-        field: "isActive",
+        field: "status",
         headerName: t("products.fields.isActive.label"),
         minWidth: 136,
         display: "flex",
         renderCell: function render({ row }) {
-          return <ProductStatus value={row.isActive} />;
+          return <ProductStatus value={row.status === 'ACTIVE'} />;
         },
       },
       {

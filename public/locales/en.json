@@ -52,6 +52,22 @@
       },
       "success": "Your acount has been created"
     },
+    "categories": {
+      "title": "Categories",
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "products": "Products"
+      },
+      "errors": {
+        "validName": "Invalid name",
+        "validDescription": "Invalid description"
+      },
+      "buttons": {
+        "submit": "Create Category"
+      },
+      "new": "New Category"
+    },
     "verify": {
       "title": "Verify your email",
       "subtitle": "We have sent a verification code to your email address.",
@@ -429,7 +445,8 @@
         "description": "Upload Image",
         "validation": "must be 1080x1080 px"
       },
-      "createdAt": "CreatedAt"
+      "createdAt": "CreatedAt",
+      "imageUrl": "Image URL"
     },
     "filter": {
       "title": "Filters",

@@ -4,6 +4,7 @@ import { disableAutoLogin } from './hooks';
 export const TOKEN_KEY = 'access_token';
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 const ADMIN_PHONE = import.meta.env.VITE_ADMIN_PHONE;
+import { UserRole } from './types/roles';
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
@@ -154,6 +155,7 @@ export const authProvider: AuthProvider = {
     return {
       id: 1,
       name: 'James Sullivan',
+      roleName: UserRole.ADMIN,
       avatar: 'https://i.pravatar.cc/150',
     };
   },
