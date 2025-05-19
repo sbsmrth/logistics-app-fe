@@ -5,7 +5,18 @@ export const TOKEN_KEY = 'access_token';
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 const ADMIN_PHONE = import.meta.env.VITE_ADMIN_PHONE;
 import { UserRole } from './types/roles';
+import { jwtDecode } from 'jwt-decode';
+const DEFAULT_AVATAR = "https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740";
 
+interface DecodedToken {
+  id: string;
+  name: string;
+  avatar?: string;
+  email: string;
+  role?: {
+    name: UserRole;
+  };
+}
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     const res = await fetch(API_URL + '/auth/signIn', {
@@ -18,6 +29,7 @@ export const authProvider: AuthProvider = {
         current_password: password,
       }),
     });
+
 
     if (res.ok) {
       return {
@@ -148,15 +160,22 @@ export const authProvider: AuthProvider = {
   getPermissions: async () => null,
   getIdentity: async () => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
+    if (!token) return null;
+
+    try {
+
+      const decoded: DecodedToken = jwtDecode(token);
+      console.log("decoded en auth", decoded);
+      return {
+        id: decoded.id as string,
+        name: decoded.name,
+        email: decoded.email,
+        roleName: decoded.role?.name ,
+        avatar: decoded.avatar || DEFAULT_AVATAR,
+      };
+    } catch (error) {
+      console.error("Token inválido:", error);
       return null;
     }
-
-    return {
-      id: 1,
-      name: 'James Sullivan',
-      roleName: UserRole.ADMIN,
-      avatar: 'https://i.pravatar.cc/150',
-    };
   },
 };

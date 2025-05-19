@@ -81,9 +81,7 @@ export const LoginPage: React.FC<LoginProps> = ({
 
   const [open, setOpen] = useState(false);
   const [otp, setOtp] = useState('');
-  const [currentUserId, setCurrentUserId] = useState(
-    '6823f3d8fb805a6d9dac4f85'
-  );
+  const [currentEmail, setCurrentEmail] = useState('');
 
   const apiUrl = useApiUrl();
 
@@ -216,6 +214,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               sx={{
                 mt: 0,
               }}
+              onChange={e => {setCurrentEmail(e.target.value)}}
             />
             <TextField
               {...register('password', {
@@ -334,7 +333,7 @@ export const LoginPage: React.FC<LoginProps> = ({
       },
       body: JSON.stringify({
         code: otp,
-        id: currentUserId,
+        email: currentEmail,
       }),
     });
 
