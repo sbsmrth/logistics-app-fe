@@ -38,6 +38,7 @@ import { ColorModeContextProvider } from './contexts';
 import { Header, Title } from './components';
 import { useAutoLoginForDemo } from './hooks';
 import { StoreUpload } from './pages/stores/upload';
+import { accessControlProvider } from './accessControlProvider';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 // const API_URL = 'https://api.finefoods.refine.dev';
@@ -137,7 +138,12 @@ const App: React.FC = () => {
                     icon: <MopedOutlined />,
                   },
                 },
+                {
+                  name: 'available-products',
+                  list: '/inventories/available-products',
+                },
               ]}
+              accessControlProvider={accessControlProvider}
             >
               <Routes>
                 <Route

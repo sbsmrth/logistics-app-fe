@@ -1,17 +1,22 @@
-import React, { useMemo, useState } from "react";
-import { useApiUrl, useCustom, useTranslate } from "@refinedev/core";
-import dayjs from "dayjs";
-import Grid from "@mui/material/Grid2";
-import { NumberField } from "@refinedev/mui";
-import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
+import React, { useMemo, useState } from 'react';
+import {
+  useApiUrl,
+  useCustom,
+  useGetIdentity,
+  useTranslate,
+} from '@refinedev/core';
+import dayjs from 'dayjs';
+import Grid from '@mui/material/Grid2';
+import { NumberField } from '@refinedev/mui';
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 import {
   DailyOrders,
   DailyRevenue,
@@ -20,12 +25,13 @@ import {
   OrderTimeline,
   RecentOrders,
   TrendingMenu,
-} from "../../components/dashboard";
-import { TrendIcon } from "../../components/icons";
-import { Card, RefineListView } from "../../components";
-import type { IOrderChart, ISalesChart } from "../../interfaces";
+} from '../../components/dashboard';
+import { TrendIcon } from '../../components/icons';
+import { Card, RefineListView } from '../../components';
+import type { IIdentity, IOrderChart, ISalesChart } from '../../interfaces';
+import { ProductsWrapper } from '../../components/dashboard/productItems';
 
-type DateFilter = "lastWeek" | "lastMonth";
+type DateFilter = 'lastWeek' | 'lastMonth';
 
 const DATE_FILTERS: Record<
   DateFilter,
@@ -35,40 +41,40 @@ const DATE_FILTERS: Record<
   }
 > = {
   lastWeek: {
-    text: "lastWeek",
-    value: "lastWeek",
+    text: 'lastWeek',
+    value: 'lastWeek',
   },
   lastMonth: {
-    text: "lastMonth",
-    value: "lastMonth",
+    text: 'lastMonth',
+    value: 'lastMonth',
   },
 };
 
-export const DashboardPage: React.FC = () => {
+const GeneralDashboard = () => {
   const t = useTranslate();
   const API_URL = useApiUrl();
 
   const [selecetedDateFilter, setSelectedDateFilter] = useState<DateFilter>(
-    DATE_FILTERS.lastWeek.value,
+    DATE_FILTERS.lastWeek.value
   );
 
   const dateFilterQuery = useMemo(() => {
     const now = dayjs();
     switch (selecetedDateFilter) {
-      case "lastWeek":
+      case 'lastWeek':
         return {
-          start: now.subtract(6, "days").startOf("day").format(),
-          end: now.endOf("day").format(),
+          start: now.subtract(6, 'days').startOf('day').format(),
+          end: now.endOf('day').format(),
         };
-      case "lastMonth":
+      case 'lastMonth':
         return {
-          start: now.subtract(1, "month").startOf("day").format(),
-          end: now.endOf("day").format(),
+          start: now.subtract(1, 'month').startOf('day').format(),
+          end: now.endOf('day').format(),
         };
       default:
         return {
-          start: now.subtract(7, "days").startOf("day").format(),
-          end: now.endOf("day").format(),
+          start: now.subtract(7, 'days').startOf('day').format(),
+          end: now.endOf('day').format(),
         };
     }
   }, [selecetedDateFilter]);
@@ -79,7 +85,7 @@ export const DashboardPage: React.FC = () => {
     trend: number;
   }>({
     url: `${API_URL}/dailyRevenue`,
-    method: "get",
+    method: 'get',
     config: {
       query: dateFilterQuery,
     },
@@ -92,7 +98,7 @@ export const DashboardPage: React.FC = () => {
     trend: number;
   }>({
     url: `${API_URL}/dailyOrders`,
-    method: "get",
+    method: 'get',
     config: {
       query: dateFilterQuery,
     },
@@ -105,11 +111,12 @@ export const DashboardPage: React.FC = () => {
     trend: number;
   }>({
     url: `${API_URL}/newCustomers`,
-    method: "get",
+    method: 'get',
     config: {
       query: dateFilterQuery,
     },
   });
+
   const newCustomers = newCustomersData?.data;
 
   return (
@@ -118,13 +125,13 @@ export const DashboardPage: React.FC = () => {
         <Select
           size="small"
           value={selecetedDateFilter}
-          onChange={(e) => setSelectedDateFilter(e.target.value as DateFilter)}
+          onChange={e => setSelectedDateFilter(e.target.value as DateFilter)}
           sx={{
-            width: "160px",
-            backgroundColor: (theme) => theme.palette.background.paper,
+            width: '160px',
+            backgroundColor: theme => theme.palette.background.paper,
           }}
         >
-          {Object.values(DATE_FILTERS).map((filter) => {
+          {Object.values(DATE_FILTERS).map(filter => {
             return (
               <MenuItem key={filter.value} value={filter.value}>
                 <Typography color="text.secondary" lineHeight="24px">
@@ -146,20 +153,20 @@ export const DashboardPage: React.FC = () => {
             xl: 10,
           }}
           sx={{
-            height: "264px",
+            height: '264px',
           }}
         >
           <Card
-            title={t("dashboard.dailyRevenue.title")}
+            title={t('dashboard.dailyRevenue.title')}
             icon={<MonetizationOnOutlinedIcon />}
             sx={{
-              ".MuiCardContent-root:last-child": {
-                paddingBottom: "24px",
+              '.MuiCardContent-root:last-child': {
+                paddingBottom: '24px',
               },
             }}
             cardContentProps={{
               sx: {
-                height: "208px",
+                height: '208px',
               },
             }}
             cardHeaderProps={{
@@ -170,8 +177,8 @@ export const DashboardPage: React.FC = () => {
                     <NumberField
                       value={dailyRevenue?.trend || 0}
                       options={{
-                        style: "currency",
-                        currency: "USD",
+                        style: 'currency',
+                        currency: 'USD',
                       }}
                     />
                   }
@@ -191,20 +198,20 @@ export const DashboardPage: React.FC = () => {
             xl: 7,
           }}
           sx={{
-            height: "264px",
+            height: '264px',
           }}
         >
           <Card
-            title={t("dashboard.dailyOrders.title")}
+            title={t('dashboard.dailyOrders.title')}
             icon={<ShoppingBagOutlinedIcon />}
             sx={{
-              ".MuiCardContent-root:last-child": {
-                paddingBottom: "24px",
+              '.MuiCardContent-root:last-child': {
+                paddingBottom: '24px',
               },
             }}
             cardContentProps={{
               sx: {
-                height: "208px",
+                height: '208px',
               },
             }}
             cardHeaderProps={{
@@ -228,20 +235,20 @@ export const DashboardPage: React.FC = () => {
             xl: 7,
           }}
           sx={{
-            height: "264px",
+            height: '264px',
           }}
         >
           <Card
-            title={t("dashboard.newCustomers.title")}
+            title={t('dashboard.newCustomers.title')}
             icon={<AccountCircleOutlinedIcon />}
             sx={{
-              ".MuiCardContent-root:last-child": {
-                paddingBottom: "24px",
+              '.MuiCardContent-root:last-child': {
+                paddingBottom: '24px',
               },
             }}
             cardContentProps={{
               sx: {
-                height: "208px",
+                height: '208px',
               },
             }}
             cardHeaderProps={{
@@ -265,15 +272,15 @@ export const DashboardPage: React.FC = () => {
             xl: 15,
           }}
           sx={{
-            height: "504px",
+            height: '504px',
           }}
         >
           <Card
             icon={<PlaceOutlinedIcon />}
-            title={t("dashboard.deliveryMap.title")}
+            title={t('dashboard.deliveryMap.title')}
             cardContentProps={{
               sx: {
-                height: "424px",
+                height: '424px',
               },
             }}
           >
@@ -289,12 +296,12 @@ export const DashboardPage: React.FC = () => {
             xl: 9,
           }}
           sx={{
-            height: "504px",
+            height: '504px',
           }}
         >
           <Card
             icon={<WatchLaterOutlinedIcon />}
-            title={t("dashboard.timeline.title")}
+            title={t('dashboard.timeline.title')}
           >
             <OrderTimeline />
           </Card>
@@ -308,15 +315,15 @@ export const DashboardPage: React.FC = () => {
             xl: 15,
           }}
           sx={{
-            height: "800px",
+            height: '800px',
           }}
         >
           <Card
             icon={<ShoppingBagOutlinedIcon />}
-            title={t("dashboard.recentOrders.title")}
+            title={t('dashboard.recentOrders.title')}
             cardContentProps={{
               sx: {
-                height: "688px",
+                height: '688px',
               },
             }}
           >
@@ -332,17 +339,27 @@ export const DashboardPage: React.FC = () => {
             xl: 9,
           }}
           sx={{
-            height: "max-content",
+            height: 'max-content',
           }}
         >
           <Card
             icon={<TrendingUpIcon />}
-            title={t("dashboard.trendingProducts.title")}
+            title={t('dashboard.trendingProducts.title')}
           >
             <TrendingMenu />
           </Card>
         </Grid>
       </Grid>
     </RefineListView>
+  );
+};
+
+export const DashboardPage: React.FC = () => {
+  const { data: identity } = useGetIdentity<IIdentity>();
+
+  const roleName = identity?.roleName;
+
+  return (
+    <>{roleName === 'CLIENTE' ? <ProductsWrapper /> : <GeneralDashboard />}</>
   );
 };
