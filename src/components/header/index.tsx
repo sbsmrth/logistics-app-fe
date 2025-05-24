@@ -29,6 +29,7 @@ import i18n from '../../i18n';
 import type { IOrder, IStore, ICourier, IIdentity } from '../../interfaces';
 import { ColorModeContext } from '../../contexts';
 import { ProductsCart } from './user/products-cart';
+import { useSendLocation } from '../../hooks/useSendLocation';
 
 interface IOptions {
   label: string;
@@ -42,6 +43,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
   const [options, setOptions] = useState<IOptions[]>([]);
 
   const { mode, setMode } = useContext(ColorModeContext);
+
+  useSendLocation();
 
   const changeLanguage = useSetLocale();
   const locale = useGetLocale();
@@ -60,7 +63,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
       onSuccess: data => {
         const orderOptionGroup: IOptions[] = data.data.map(item => {
           return {
-            label: `${item.store.title} / #${item.orderNumber}`,
+            label: `${item.store.name} / #${item.orderNumber}`,
             link: `/orders/show/${item.id}`,
             category: t('orders.orders'),
             avatar: (
@@ -92,7 +95,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
       onSuccess: data => {
         const storeOptionGroup = data.data.map(item => {
           return {
-            label: `${item.title} - ${item.address.text}`,
+            // label: `${item.name} - ${item.address.text}`,
+            label: `${item.name} - Address`,
             link: `/stores/edit/${item.id}`,
             category: t('stores.stores'),
           };
@@ -119,7 +123,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                   width: '32px',
                   height: '32px',
                 }}
-                src={item.avatar?.[0]?.url}
+                src={''}
               />
             ),
             link: `/couriers/edit/${item.id}`,

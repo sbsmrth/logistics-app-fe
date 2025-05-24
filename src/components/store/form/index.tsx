@@ -43,7 +43,7 @@ export const StoreForm = (props: Props) => {
       >
         <FormControl fullWidth>
           <Controller
-            name="title"
+            name="name"
             control={control}
             defaultValue=""
             rules={{
@@ -62,8 +62,8 @@ export const StoreForm = (props: Props) => {
               />
             )}
           />
-          {errors.title && (
-            <FormHelperText error>{errors.title.message}</FormHelperText>
+          {errors.name && (
+            <FormHelperText error>{errors.name.message}</FormHelperText>
           )}
         </FormControl>
 
@@ -77,7 +77,7 @@ export const StoreForm = (props: Props) => {
           </FormLabel>
           <Controller
             control={control}
-            name="isActive"
+            name="status"
             defaultValue={false}
             rules={{
               validate: (value) => {
@@ -97,7 +97,7 @@ export const StoreForm = (props: Props) => {
                   exclusive
                   color="primary"
                   onChange={(_, newValue) => {
-                    setValue("isActive", newValue, {
+                    setValue("status", newValue ? 'ACTIVE' : 'INACTIVE', {
                       shouldValidate: true,
                     });
 
@@ -114,12 +114,12 @@ export const StoreForm = (props: Props) => {
               );
             }}
           />
-          {errors.isActive && (
-            <FormHelperText error>{errors.isActive.message}</FormHelperText>
+          {errors.status && (
+            <FormHelperText error>{errors.status.message}</FormHelperText>
           )}
         </FormControl>
 
-        <FormControl fullWidth>
+        {/* <FormControl fullWidth>
           <Controller
             name="email"
             control={control}
@@ -143,11 +143,11 @@ export const StoreForm = (props: Props) => {
           {errors.email && (
             <FormHelperText error>{errors.email.message}</FormHelperText>
           )}
-        </FormControl>
+        </FormControl> */}
 
         <FormControl fullWidth>
           <Controller
-            name="address.text"
+            name="address"
             control={control}
             defaultValue=""
             rules={{
@@ -175,35 +175,7 @@ export const StoreForm = (props: Props) => {
           )}
         </FormControl>
 
-        <FormControl fullWidth>
-          <Controller
-            name="gsm"
-            control={control}
-            defaultValue=""
-            rules={{
-              required: t("errors.required.field", {
-                field: "gsm",
-              }),
-            }}
-            render={({ field }) => (
-              <InputMask {...field} mask="(999) 999 99 99" disabled={false}>
-                {/* @ts-expect-error False alarm */}
-                {(props: TextFieldProps) => (
-                  <TextField
-                    {...props}
-                    label={t("stores.fields.gsm")}
-                    size="small"
-                    margin="none"
-                    variant="outlined"
-                  />
-                )}
-              </InputMask>
-            )}
-          />
-          {errors.gsm && (
-            <FormHelperText error>{errors.gsm.message}</FormHelperText>
-          )}
-        </FormControl>
+   
 
         {/* this is a workaround for registering fields to ant design form*/}
         {/* otherwise these fields will be null */}
@@ -213,17 +185,17 @@ export const StoreForm = (props: Props) => {
           }}
         >
           <input
-            {...register("address.coordinate.0", {
+            {...register("latitude", {
               required: t("errors.required.field", {
-                field: "address.coordinate.0",
+                field: "latitude",
               }),
             })}
             type="hidden"
           />
           <input
-            {...register("address.coordinate.1", {
+            {...register("longitude", {
               required: t("errors.required.field", {
-                field: "address.coordinate.1",
+                field: "longitude",
               }),
             })}
             type="hidden"

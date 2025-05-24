@@ -48,15 +48,15 @@ export const AllStoresMap = () => {
           mapId: "all-stores-map",
           disableDefaultUI: true,
           center: {
-            lat: 40.73061,
-            lng: -73.935242,
+            lat: 4.7110,
+            lng: -74.0721,
           },
-          zoom: 10,
+          zoom: 5,
         }}
       >
         {stores?.map((store) => {
-          const lat = Number(store.address?.coordinate?.[0]);
-          const lng = Number(store.address?.coordinate?.[1]);
+          const lat = Number(store.latitude);
+          const lng = Number(store.longitude);
 
           if (!lat || !lng) return null;
 
@@ -74,7 +74,7 @@ export const AllStoresMap = () => {
               }}
             >
               {(selectedStore?.id !== store.id || !selectedStore) && (
-                <img src="/images/marker-store.svg" alt={store.title} />
+                <img src="/images/marker-store.svg" alt={store.name} />
               )}
               {selectedStore?.id === store.id && (
                 <Card
@@ -96,11 +96,11 @@ export const AllStoresMap = () => {
                     justifyContent="space-between"
                     alignItems="center"
                   >
-                    <Typography variant="h6">{store.title}</Typography>
+                    <Typography variant="h6">{store.name}</Typography>
                     <StoreStatus
-                      value={store.isActive}
+                      value={store.status === 'ACTIVE'}
                       label={
-                        store.isActive
+                        store.status === 'ACTIVE'
                           ? t("stores.fields.isActive.true")
                           : t("stores.fields.isActive.false")
                       }
@@ -110,10 +110,10 @@ export const AllStoresMap = () => {
                     <Divider />
                     <Stack direction="row" alignItems="center" gap="8px">
                       <PlaceOutlinedIcon />
-                      <Typography py="8px">{store.address?.text}</Typography>
+                      <Typography py="8px">{store.address}</Typography>
                     </Stack>
                     <Divider />
-                    <Stack direction="row" alignItems="center" gap="8px">
+                    {/* <Stack direction="row" alignItems="center" gap="8px">
                       <AccountCircleOutlinedIcon />
                       <Typography py="8px">{store.email}</Typography>
                     </Stack>
@@ -121,7 +121,7 @@ export const AllStoresMap = () => {
                     <Stack direction="row" alignItems="center" gap="8px">
                       <LocalPhoneOutlinedIcon />
                       <Typography py="8px">{store.gsm}</Typography>
-                    </Stack>
+                    </Stack> */}
                   </Box>
                 </Card>
               )}

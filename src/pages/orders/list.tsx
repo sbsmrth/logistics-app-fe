@@ -1,32 +1,36 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 import {
+  CanAccess,
   type HttpError,
   useExport,
   useNavigation,
   useTranslate,
   useUpdate,
-} from "@refinedev/core";
+} from '@refinedev/core';
 import {
   DateField,
   ExportButton,
   NumberField,
   useDataGrid,
-} from "@refinedev/mui";
+} from '@refinedev/mui';
 import {
   DataGrid,
   GridActionsCellItem,
   type GridColDef,
-} from "@mui/x-data-grid";
-import Typography from "@mui/material/Typography";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import { OrderStatus, OrderTableColumnProducts } from "../../components/order";
-import type { IOrder, IOrderFilterVariables } from "../../interfaces";
-import { RefineListView } from "../../components";
+} from '@mui/x-data-grid';
+import Typography from '@mui/material/Typography';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { OrderStatus, OrderTableColumnProducts } from '../../components/order';
+import type { IOrder, IOrderFilterVariables } from '../../interfaces';
+import { RefineListView } from '../../components';
+import { Box, Button } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Unauthorized } from '../../components/unauthorized';
 
 export const OrderList = () => {
   const t = useTranslate();
-  const { mutate } = useUpdate({ resource: "orders" });
+  const { mutate } = useUpdate({ resource: 'orders' });
 
   const { dataGridProps, filters, sorters } = useDataGrid<
     IOrder,
@@ -39,46 +43,46 @@ export const OrderList = () => {
   const columns = useMemo<GridColDef<IOrder>[]>(
     () => [
       {
-        field: "orderNumber",
-        headerName: t("orders.fields.order"),
-        description: t("orders.fields.order"),
-        display: "flex",
+        field: 'orderNumber',
+        headerName: t('orders.fields.order'),
+        description: t('orders.fields.order'),
+        display: 'flex',
         renderCell: function render({ row }) {
           return <Typography>#{row.orderNumber}</Typography>;
         },
       },
       {
-        field: "status.text",
-        headerName: t("orders.fields.status"),
+        field: 'status.text',
+        headerName: t('orders.fields.status'),
         width: 124,
-        display: "flex",
+        display: 'flex',
         renderCell: function render({ row }) {
           return <OrderStatus status={row.status.text} />;
         },
       },
       {
-        field: "products",
-        headerName: t("orders.fields.products"),
+        field: 'products',
+        headerName: t('orders.fields.products'),
         width: 184,
         sortable: false,
-        display: "flex",
+        display: 'flex',
         renderCell: function render({ row }) {
           return <OrderTableColumnProducts order={row} />;
         },
       },
       {
-        field: "amount",
-        headerName: t("orders.fields.amount"),
-        headerAlign: "center",
-        align: "right",
+        field: 'amount',
+        headerName: t('orders.fields.amount'),
+        headerAlign: 'center',
+        align: 'right',
         width: 120,
-        display: "flex",
+        display: 'flex',
         renderCell: function render({ row }) {
           return (
             <NumberField
               options={{
-                currency: "USD",
-                style: "currency",
+                currency: 'USD',
+                style: 'currency',
               }}
               value={row.amount}
             />
@@ -86,42 +90,42 @@ export const OrderList = () => {
         },
       },
       {
-        field: "store",
-        headerName: t("orders.fields.store"),
+        field: 'store',
+        headerName: t('orders.fields.store'),
         width: 154,
-        valueGetter: (_, row) => row.store.title,
+        valueGetter: (_, row) => row.store.name,
         sortable: false,
       },
       {
-        field: "user.fullName",
-        headerName: t("orders.fields.customer"),
+        field: 'user.fullName',
+        headerName: t('orders.fields.customer'),
         width: 154,
         valueGetter: (_, row) => row.user.fullName,
         sortable: false,
       },
 
       {
-        field: "createdAt",
-        headerName: t("orders.fields.createdAt"),
+        field: 'createdAt',
+        headerName: t('orders.fields.createdAt'),
         width: 200,
-        display: "flex",
+        display: 'flex',
         renderCell: function render({ row }) {
           return <DateField value={row.createdAt} format="LL / hh:mm a" />;
         },
       },
       {
-        field: "actions",
-        type: "actions",
-        headerName: t("table.actions"),
+        field: 'actions',
+        type: 'actions',
+        headerName: t('table.actions'),
         sortable: false,
-        headerAlign: "right",
-        align: "right",
+        headerAlign: 'right',
+        align: 'right',
         getActions: ({ id }) => [
           <GridActionsCellItem
             key={1}
             icon={<CheckOutlinedIcon color="success" />}
-            sx={{ padding: "2px 6px" }}
-            label={t("buttons.accept")}
+            sx={{ padding: '2px 6px' }}
+            label={t('buttons.accept')}
             showInMenu
             onClick={() => {
               mutate({
@@ -129,7 +133,7 @@ export const OrderList = () => {
                 values: {
                   status: {
                     id: 2,
-                    text: "Ready",
+                    text: 'Ready',
                   },
                 },
               });
@@ -138,8 +142,8 @@ export const OrderList = () => {
           <GridActionsCellItem
             key={2}
             icon={<CloseOutlinedIcon color="error" />}
-            sx={{ padding: "2px 6px" }}
-            label={t("buttons.reject")}
+            sx={{ padding: '2px 6px' }}
+            label={t('buttons.reject')}
             showInMenu
             onClick={() =>
               mutate({
@@ -147,7 +151,7 @@ export const OrderList = () => {
                 values: {
                   status: {
                     id: 5,
-                    text: "Cancelled",
+                    text: 'Cancelled',
                   },
                 },
               })
@@ -156,7 +160,7 @@ export const OrderList = () => {
         ],
       },
     ],
-    [t, mutate],
+    [t, mutate]
   );
 
   const { show } = useNavigation();
@@ -166,43 +170,45 @@ export const OrderList = () => {
     filters,
     pageSize: 50,
     maxItemCount: 50,
-    mapData: (item) => {
+    mapData: item => {
       return {
         id: item.id,
         amount: item.amount,
         orderNumber: item.orderNumber,
         status: item.status.text,
-        store: item.store.title,
+        store: item.store.name,
         user: item.user.firstName,
       };
     },
   });
 
   return (
-    <RefineListView
-      headerButtons={
-        <ExportButton
-          variant="outlined"
-          onClick={triggerExport}
-          loading={isLoading}
-          size="medium"
-          sx={{ height: "40px" }}
+    <CanAccess resource="orders" action="list" fallback={<Unauthorized />}>
+      <RefineListView
+        headerButtons={
+          <ExportButton
+            variant="outlined"
+            onClick={triggerExport}
+            loading={isLoading}
+            size="medium"
+            sx={{ height: '40px' }}
+          />
+        }
+      >
+        <DataGrid
+          {...dataGridProps}
+          columns={columns}
+          onRowClick={({ id }) => {
+            show('orders', id);
+          }}
+          pageSizeOptions={[10, 20, 50, 100]}
+          sx={{
+            '& .MuiDataGrid-row': {
+              cursor: 'pointer',
+            },
+          }}
         />
-      }
-    >
-      <DataGrid
-        {...dataGridProps}
-        columns={columns}
-        onRowClick={({ id }) => {
-          show("orders", id);
-        }}
-        pageSizeOptions={[10, 20, 50, 100]}
-        sx={{
-          "& .MuiDataGrid-row": {
-            cursor: "pointer",
-          },
-        }}
-      />
-    </RefineListView>
+      </RefineListView>
+    </CanAccess>
   );
 };

@@ -67,14 +67,19 @@ export interface IEvent {
 }
 
 export interface IStore {
-  id: number;
-  gsm: string;
-  email: string;
-  title: string;
-  isActive: boolean;
-  createdAt: string;
-  address: IAddress;
-  products: IProduct[];
+   id: number;
+  id_almacen: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  cityId: number;
+  city: City;
+  capacity: number;
+  zipCode: number;
+  status: statusStore;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IOrder {
@@ -142,15 +147,17 @@ export interface ICourierStatus {
 export interface ICourier {
   id: number;
   name: string;
-  surname: string;
+  // surname: string;
   email: string;
   gender: string;
-  gsm: string;
+  phone: string;
   createdAt: string;
   accountNumber: string;
-  licensePlate: string;
+  // licensePlate: string;
+  latitude: number;
+  longitude: number;
   address: string;
-  avatar: IFile[];
+  // avatar: IFile[];
   store: IStore;
   status: ICourierStatus;
   vehicle: IVehicle;

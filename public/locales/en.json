@@ -57,7 +57,10 @@
       "fields": {
         "name": "Name",
         "description": "Description",
-        "products": "Products"
+        "products": "Products",
+        "isActive": {
+          "ACTIVE": "ACTIVE"
+        }
       },
       "errors": {
         "validName": "Invalid name",
@@ -207,9 +210,9 @@
         "male": "Male",
         "female": "Female"
       },
-      "gsm": {
-        "label": "Gsm",
-        "placeholder": "Please enter courier gsm"
+      "phone": {
+        "label": "Phone",
+        "placeholder": "Please enter courier phone"
       },
       "email": {
         "label": "Email",
@@ -517,7 +520,9 @@
       "createdAt": "CreatedAt",
       "address": "Address",
       "email": "Email",
-      "gsm": "Phone"
+      "gsm": "Phone",
+      "capacity": "Capacity",
+      "zipCode": "Zip Code"
     },
     "filter": {
       "id": {

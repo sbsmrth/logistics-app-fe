@@ -1,22 +1,23 @@
-import { useState } from "react";
-import { useNavigation, useTranslate } from "@refinedev/core";
-import { DeleteButton, ListButton } from "@refinedev/mui";
-import ArrowBack from "@mui/icons-material/ArrowBack";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid2";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Skeleton from "@mui/material/Skeleton";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useState } from 'react';
+import { CanAccess, useNavigation, useTranslate } from '@refinedev/core';
+import { DeleteButton, ListButton } from '@refinedev/mui';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid2';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import {
   StoreCourierTable,
   StoreForm,
   StoreMap,
   useStoreForm,
   StoreInfoCard,
-} from "../../components";
-import { Button, Stack } from "@mui/material";
+} from '../../components';
+import { Button, Stack } from '@mui/material';
+import { Unauthorized } from '../../components/unauthorized';
 
 export const StoreEdit = () => {
   const { list } = useNavigation();
@@ -24,7 +25,7 @@ export const StoreEdit = () => {
 
   const t = useTranslate();
   const form = useStoreForm({
-    action: "edit",
+    action: 'edit',
     onMutationSuccess: () => {
       setIsFormIsDisabled(true);
     },
@@ -32,114 +33,116 @@ export const StoreEdit = () => {
 
   return (
     <>
-      <ListButton
-        variant="outlined"
-        sx={{
-          borderColor: "GrayText",
-          color: "GrayText",
-          backgroundColor: "transparent",
-        }}
-        startIcon={<ArrowBack />}
-      />
-      <Divider
-        sx={{
-          marginBottom: "24px",
-          marginTop: "24px",
-        }}
-      />
-      {isFormIsDisabled && (
-        <Typography
-          variant="h5"
-          gutterBottom
+      <CanAccess resource="stores" action="edit" fallback={<Unauthorized />}>
+        <ListButton
+          variant="outlined"
           sx={{
-            marginTop: "24px",
-            marginBottom: "24px",
+            borderColor: 'GrayText',
+            color: 'GrayText',
+            backgroundColor: 'transparent',
           }}
-        >
-          {form.store?.title ?? (
-            <Skeleton
-              variant="text"
-              sx={{ fontSize: "24px", width: "120px" }}
-            />
-          )}
-        </Typography>
-      )}
-      <Grid container spacing="24px">
-        <Grid
-          size={{
-            xs: 12,
-            md: 6,
-            lg: 5,
+          startIcon={<ArrowBack />}
+        />
+        <Divider
+          sx={{
+            marginBottom: '24px',
+            marginTop: '24px',
           }}
-        >
-          {isFormIsDisabled ? (
-            <Box>
-              <StoreInfoCard store={form?.store} />
-              <Stack
-                mt="24px"
-                px="16px"
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <DeleteButton
-                  variant="text"
-                  onSuccess={() => {
-                    list("stores");
-                  }}
-                  sx={{
-                    opacity: 0.5,
-                  }}
-                />
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  startIcon={<EditOutlinedIcon />}
-                  sx={{
-                    backgroundColor: (theme) => theme.palette.background.paper,
-                    borderColor: (theme) => theme.palette.grey[500],
-                  }}
-                  onClick={() => {
-                    setIsFormIsDisabled(false);
-                  }}
+        />
+        {isFormIsDisabled && (
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              marginTop: '24px',
+              marginBottom: '24px',
+            }}
+          >
+            {form.store?.name ?? (
+              <Skeleton
+                variant="text"
+                sx={{ fontSize: '24px', width: '120px' }}
+              />
+            )}
+          </Typography>
+        )}
+        <Grid container spacing="24px">
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+              lg: 5,
+            }}
+          >
+            {isFormIsDisabled ? (
+              <Box>
+                <StoreInfoCard store={form?.store} />
+                <Stack
+                  mt="24px"
+                  px="16px"
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
                 >
-                  {t("buttons.edit")}
-                </Button>
-              </Stack>
+                  <DeleteButton
+                    variant="text"
+                    onSuccess={() => {
+                      list('stores');
+                    }}
+                    sx={{
+                      opacity: 0.5,
+                    }}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={<EditOutlinedIcon />}
+                    sx={{
+                      backgroundColor: theme => theme.palette.background.paper,
+                      borderColor: theme => theme.palette.grey[500],
+                    }}
+                    onClick={() => {
+                      setIsFormIsDisabled(false);
+                    }}
+                  >
+                    {t('buttons.edit')}
+                  </Button>
+                </Stack>
+              </Box>
+            ) : (
+              <StoreForm
+                action="edit"
+                form={form}
+                onCancel={() => {
+                  setIsFormIsDisabled(true);
+                }}
+              />
+            )}
+          </Grid>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+              lg: 7,
+            }}
+          >
+            <Box height="432px">
+              <StoreMap
+                lat={form.store?.latitude}
+                lng={form.store?.longitude}
+                store={form.store}
+                onDragEnd={form.handleMapOnDragEnd}
+                isDisabled={isFormIsDisabled}
+              />
             </Box>
-          ) : (
-            <StoreForm
-              action="edit"
-              form={form}
-              onCancel={() => {
-                setIsFormIsDisabled(true);
-              }}
-            />
-          )}
+            <Box mt="24px">
+              <Paper>
+                <StoreCourierTable store={form.store} />
+              </Paper>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid
-          size={{
-            xs: 12,
-            md: 6,
-            lg: 7,
-          }}
-        >
-          <Box height="432px">
-            <StoreMap
-              lat={form.latLng.lat}
-              lng={form.latLng.lng}
-              store={form.store}
-              onDragEnd={form.handleMapOnDragEnd}
-              isDisabled={isFormIsDisabled}
-            />
-          </Box>
-          <Box mt="24px">
-            <Paper>
-              <StoreCourierTable store={form.store} />
-            </Paper>
-          </Box>
-        </Grid>
-      </Grid>
+      </CanAccess>
     </>
   );
 };
