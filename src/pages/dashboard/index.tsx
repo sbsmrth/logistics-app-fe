@@ -455,8 +455,8 @@ const GeneralDashboard = () => {
 };
 
 const DASHBOARDS = {
-  Administrador: AdminDashboard,
-  Cliente: ProductsWrapper,
+  'ADMINISTRADOR': AdminDashboard,
+  'CLIENTE': ProductsWrapper,
 };
 
 export const DashboardPage: React.FC = () => {
