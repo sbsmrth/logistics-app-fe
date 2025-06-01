@@ -170,7 +170,7 @@ export const authProvider: AuthProvider = {
         id: decoded.id as string,
         name: decoded.name,
         email: decoded.email,
-        roleName: decoded.role?.name ,
+        roleName: decoded.role?.name.toUpperCase(),
         avatar: decoded.avatar || DEFAULT_AVATAR,
       };
     } catch (error) {

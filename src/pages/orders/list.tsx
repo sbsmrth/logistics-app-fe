@@ -27,6 +27,7 @@ import { RefineListView } from '../../components';
 import { Box, Button } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Unauthorized } from '../../components/unauthorized';
+import { capitalize } from '../../utils/strings';
 
 export const OrderList = () => {
   const t = useTranslate();
@@ -57,7 +58,13 @@ export const OrderList = () => {
         width: 124,
         display: 'flex',
         renderCell: function render({ row }) {
-          return <OrderStatus status={row.status.text} />;
+          return (
+            <OrderStatus
+              status={capitalize<
+                'Pending' | 'On The Way' | 'Ready' | 'Delivered' | 'Cancelled'
+              >(row.status.text)}
+            />
+          );
         },
       },
       {
@@ -84,7 +91,7 @@ export const OrderList = () => {
                 currency: 'USD',
                 style: 'currency',
               }}
-              value={row.amount}
+              value={row.subtotal}
             />
           );
         },
@@ -173,7 +180,7 @@ export const OrderList = () => {
     mapData: item => {
       return {
         id: item.id,
-        amount: item.amount,
+        amount: item.subtotal,
         orderNumber: item.orderNumber,
         status: item.status.text,
         store: item.store.name,

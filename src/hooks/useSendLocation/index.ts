@@ -8,7 +8,7 @@ export const useSendLocation = () => {
   const apiUrl = useApiUrl();
 
   useEffect(() => {
-    if (user?.roleName !== 'Cliente') {
+    if (user?.roleName !== 'CLIENTE') {
       if (intervalRef.current) clearInterval(intervalRef.current);
       return;
     }
@@ -19,13 +19,13 @@ export const useSendLocation = () => {
           const { latitude, longitude } = position.coords;
 
           try {
-            await fetch(`${apiUrl}/updateCourierPosition`, {
+            await fetch(`${apiUrl}/location/update`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                userId: user.id,
+                deliveryId: user.id,
                 latitude,
                 longitude,
               }),

@@ -110,7 +110,7 @@ export const AllStoresMap = () => {
                     <Divider />
                     <Stack direction="row" alignItems="center" gap="8px">
                       <PlaceOutlinedIcon />
-                      <Typography py="8px">{store.address}</Typography>
+                      <Typography py="8px">{store.address.text}</Typography>
                     </Stack>
                     <Divider />
                     {/* <Stack direction="row" alignItems="center" gap="8px">
