@@ -47,7 +47,9 @@ export interface IIdentity {
 
 export interface IAddress {
   text: string;
-  coordinate: [string | number, string | number];
+  coordinate?: [string | number, string | number];
+  latitude: number;
+  longitude: number;
 }
 
 export interface IFile {
@@ -67,14 +69,20 @@ export interface IEvent {
 }
 
 export interface IStore {
-  id: number;
-  gsm: string;
-  email: string;
-  title: string;
-  isActive: boolean;
-  createdAt: string;
+   id: number;
+  id_almacen: string;
+  name: string;
   address: IAddress;
-  products: IProduct[];
+  latitude: number;
+  longitude: number;
+  cityId: number;
+  city: City;
+  capacity: number;
+  zipCode: number;
+  status: statusStore;
+  createdAt: Date;
+  updatedAt: Date;
+  products?: IProduct[];
 }
 
 export interface IOrder {
@@ -83,12 +91,14 @@ export interface IOrder {
   createdAt: string;
   products: IProduct[];
   status: IOrderStatus;
-  adress: IAddress;
-  store: IStore;
+  address: IAddress;
+  store: any;
   courier: ICourier;
   events: IEvent[];
   orderNumber: number;
-  amount: number;
+  subtotal: number;
+  deliveryDate?: Date
+  // address?: IAddress;
 }
 
 export interface IProduct {
@@ -111,6 +121,7 @@ export interface IProduct {
   barCode: string;
   status: string;
   unitPrice: number;
+  images?: {url: string, name: string}[]
 }
 
 export interface ICategory {
@@ -142,15 +153,18 @@ export interface ICourierStatus {
 export interface ICourier {
   id: number;
   name: string;
-  surname: string;
+  // surname: string;
   email: string;
   gender: string;
-  gsm: string;
+  phone: string;
   createdAt: string;
   accountNumber: string;
-  licensePlate: string;
-  address: string;
-  avatar: IFile[];
+  // licensePlate: string;
+  latitude: number;
+  longitude: number;
+  address: IAddress;
+  // avatar: IFile[];
+  gsm?: string;
   store: IStore;
   status: ICourierStatus;
   vehicle: IVehicle;

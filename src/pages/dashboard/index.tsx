@@ -30,6 +30,9 @@ import { TrendIcon } from '../../components/icons';
 import { Card, RefineListView } from '../../components';
 import type { IIdentity, IOrderChart, ISalesChart } from '../../interfaces';
 import { ProductsWrapper } from '../../components/dashboard/productItems';
+import Skeleton from '@mui/material/Skeleton';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 
 type DateFilter = 'lastWeek' | 'lastMonth';
 
@@ -48,6 +51,103 @@ const DATE_FILTERS: Record<
     text: 'lastMonth',
     value: 'lastMonth',
   },
+};
+
+const AdminDashboard = () => {
+  const t = useTranslate();
+
+  return (
+    <RefineListView>
+      <Grid container columns={24} spacing={3}>
+        <Grid
+          size={{
+            xs: 24,
+            sm: 24,
+            md: 24,
+            lg: 15,
+            xl: 15,
+          }}
+          sx={{
+            height: '504px',
+          }}
+        >
+          <Card
+            icon={<PlaceOutlinedIcon />}
+            title={t('dashboard.deliveryMap.title')}
+            cardContentProps={{
+              sx: {
+                height: '424px',
+              },
+            }}
+          >
+            <DeliveryMap />
+          </Card>
+        </Grid>
+        <Grid
+          size={{
+            xs: 24,
+            sm: 24,
+            md: 24,
+            lg: 9,
+            xl: 9,
+          }}
+          sx={{
+            height: '504px',
+          }}
+        >
+          <Card
+            icon={<WatchLaterOutlinedIcon />}
+            title={t('dashboard.timeline.title')}
+          >
+            <OrderTimeline />
+          </Card>
+        </Grid>
+        <Grid
+          size={{
+            xs: 24,
+            sm: 24,
+            md: 24,
+            lg: 15,
+            xl: 15,
+          }}
+          sx={{
+            height: '800px',
+          }}
+        >
+          <Card
+            icon={<ShoppingBagOutlinedIcon />}
+            title={t('dashboard.recentOrders.title')}
+            cardContentProps={{
+              sx: {
+                height: '688px',
+              },
+            }}
+          >
+            <RecentOrders />
+          </Card>
+        </Grid>
+        <Grid
+          size={{
+            xs: 24,
+            sm: 24,
+            md: 24,
+            lg: 9,
+            xl: 9,
+          }}
+          sx={{
+            height: 'max-content',
+          }}
+        >
+          <Card
+            icon={<TrendingUpIcon />}
+            title={t('dashboard.trendingProducts.title')}
+          >
+            <TrendingMenu />
+          </Card>
+        </Grid>
+      </Grid>
+    </RefineListView>
+  );
 };
 
 const GeneralDashboard = () => {
@@ -354,12 +454,69 @@ const GeneralDashboard = () => {
   );
 };
 
+const DASHBOARDS = {
+  Administrador: AdminDashboard,
+  Cliente: ProductsWrapper,
+};
+
 export const DashboardPage: React.FC = () => {
-  const { data: identity } = useGetIdentity<IIdentity>();
+  const { data: identity, isLoading } = useGetIdentity<IIdentity>();
 
   const roleName = identity?.roleName;
 
+  const DashBoard = DASHBOARDS[roleName as keyof typeof DASHBOARDS];
   return (
-    <>{roleName === 'CLIENTE' ? <ProductsWrapper /> : <GeneralDashboard />}</>
+    <>
+      {isLoading ? (
+        <>
+          <Grid container spacing={2}>
+            {[...Array(2)].map((_, index) => (
+              <Grid key={index} size={{ xs: 12, sm: 6 }}>
+                <Card sx={{ maxWidth: '100%', m: 2 }}>
+                  <CardHeader
+                    avatar={
+                      <Skeleton
+                        animation="wave"
+                        variant="circular"
+                        width={40}
+                        height={40}
+                      />
+                    }
+                    title={
+                      <Skeleton
+                        animation="wave"
+                        height={10}
+                        width="80%"
+                        style={{ marginBottom: 6 }}
+                      />
+                    }
+                    subheader={
+                      <Skeleton animation="wave" height={10} width="40%" />
+                    }
+                  />
+                  <Skeleton
+                    sx={{ height: 190 }}
+                    animation="wave"
+                    variant="rectangular"
+                  />
+                  <CardContent>
+                    <React.Fragment>
+                      <Skeleton
+                        animation="wave"
+                        height={10}
+                        style={{ marginBottom: 6 }}
+                      />
+                      <Skeleton animation="wave" height={10} width="80%" />
+                    </React.Fragment>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      ) : (
+        <DashBoard />
+      )}
+    </>
   );
 };

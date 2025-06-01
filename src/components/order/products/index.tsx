@@ -36,7 +36,7 @@ export const OrderProducts = ({ order }: Props) => {
                 width: 32,
                 height: 32,
               }}
-              src={row.images[0]?.thumbnailUrl || row.images[0]?.url}
+              src={row.images![0]?.url || row.images![0]?.url}
               alt={row.name}
             />
           );
@@ -70,7 +70,7 @@ export const OrderProducts = ({ order }: Props) => {
         renderCell: function render({ row }) {
           return (
             <NumberField
-              value={row.price}
+              value={row.unitPrice}
               options={{
                 currency: "USD",
                 style: "currency",
@@ -89,7 +89,7 @@ export const OrderProducts = ({ order }: Props) => {
         renderCell: function render({ row }) {
           return (
             <NumberField
-              value={row.count * row.price}
+              value={row.count * row.unitPrice}
               options={{ style: "currency", currency: "USD" }}
               style={{
                 whiteSpace: "nowrap",
@@ -126,7 +126,7 @@ export const OrderProducts = ({ order }: Props) => {
                   fontWeight={500}
                   paddingRight="8px"
                   value={uniqueProducts.reduce(
-                    (acc, product) => acc + product.count * product.price,
+                    (acc, product) => acc + product.count * product.unitPrice,
                     0,
                   )}
                   options={{

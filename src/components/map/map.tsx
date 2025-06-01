@@ -84,7 +84,7 @@ const MapWrapper: FC<PropsWithChildren<MapWrapperProps>> = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //  @ts-ignore
       version="beta"
-      libraries={["marker"]}
+      libraries={["marker", "places", "geometry"]}
       apiKey={import.meta.env.VITE_APP_MAP_ID}
     >
       <MapComponent {...mapProps}>{children}</MapComponent>

@@ -1,39 +1,37 @@
-import React from "react";
 import {
   useTranslate,
-  useApiUrl,
   type HttpError,
   useGetToPath,
   useGo,
-} from "@refinedev/core";
-import InputMask from "react-input-mask";
-import { useSearchParams } from "react-router";
-import { useAutocomplete } from "@refinedev/mui";
+  CanAccess,
+} from '@refinedev/core';
+import InputMask from 'react-input-mask';
+import { useSearchParams } from 'react-router';
+import { useAutocomplete } from '@refinedev/mui';
 import {
   type UseStepsFormReturnType,
   useStepsForm,
-} from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import Stack from "@mui/material/Stack";
-import Step from "@mui/material/Step";
-import Stepper from "@mui/material/Stepper";
-import StepButton from "@mui/material/StepButton";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import type { TextFieldProps } from "@mui/material/TextField";
-import type { ICourier, IFile, IStore, Nullable } from "../../interfaces";
-import { CourierImageUpload } from "../../components";
-import { useImageUpload } from "../../utils";
-import Divider from "@mui/material/Divider";
+} from '@refinedev/react-hook-form';
+import { Controller } from 'react-hook-form';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Stack from '@mui/material/Stack';
+import Step from '@mui/material/Step';
+import Stepper from '@mui/material/Stepper';
+import StepButton from '@mui/material/StepButton';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import type { TextFieldProps } from '@mui/material/TextField';
+import type { ICourier, IStore, Nullable } from '../../interfaces';
+import Divider from '@mui/material/Divider';
+import { Unauthorized } from '../../components/unauthorized';
 
 export const CourierCreate = () => {
   const getToPath = useGetToPath();
@@ -56,106 +54,110 @@ export const CourierCreate = () => {
   const onModalClose = () => {
     go({
       to:
-        searchParams.get("to") ??
+        searchParams.get('to') ??
         getToPath({
-          action: "list",
+          action: 'list',
         }) ??
-        "",
+        '',
       query: {
         to: undefined,
       },
       options: {
         keepQuery: true,
       },
-      type: "replace",
+      type: 'replace',
     });
   };
 
   return (
-    <Dialog
-      open
-      sx={{
-        "& .MuiDialog-paper": {
-          maxWidth: "640px",
-          width: "100%",
-        },
-      }}
-    >
-      <DialogTitle sx={{ m: 0, p: 2 }}>{t("couriers.actions.add")}</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={onModalClose}
+    <CanAccess resource="products" action="create" fallback={<Unauthorized />}>
+      <Dialog
+        open
         sx={{
-          position: "absolute",
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
+          '& .MuiDialog-paper': {
+            maxWidth: '640px',
+            width: '100%',
+          },
         }}
       >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent>
-        <Stepper nonLinear activeStep={stepsForm.steps.currentStep}>
-          {stepTitles.map((label, index) => (
-            <Step
-              key={label}
-              sx={{
-                "& .MuiStepIcon-text": {
-                  fill: (theme) =>
-                    theme.palette.mode === "light" ? "white" : "black",
-                },
-              }}
-            >
-              <StepButton onClick={() => stepsForm.steps.gotoStep(index)}>
-                {label}
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
-        <Box mt="48px">
-          <form>{stepFormFields[stepsForm.steps.currentStep]}</form>
-        </Box>
-
-        <Divider
+        <DialogTitle sx={{ m: 0, p: 2 }}>
+          {t('couriers.actions.add')}
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onModalClose}
           sx={{
-            margin: "24px 0",
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: theme => theme.palette.grey[500],
           }}
-        />
-        <Stack direction="row" justifyContent="space-between">
-          <Button onClick={onModalClose} color="inherit" variant="text">
-            {t("buttons.cancel")}
-          </Button>
-          <Stack direction="row" spacing="8px">
-            {!isFirstStep && (
-              <Button
-                disabled={isFirstStep}
-                variant="outlined"
-                color="inherit"
-                onClick={() => {
-                  stepsForm.steps.gotoStep(stepsForm.steps.currentStep - 1);
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          <Stepper nonLinear activeStep={stepsForm.steps.currentStep}>
+            {stepTitles.map((label, index) => (
+              <Step
+                key={label}
+                sx={{
+                  '& .MuiStepIcon-text': {
+                    fill: theme =>
+                      theme.palette.mode === 'light' ? 'white' : 'black',
+                  },
                 }}
               >
-                {t("buttons.previousStep")}
-              </Button>
-            )}
-            {isLastStep ? (
-              <Button {...stepsForm.saveButtonProps} variant="contained">
-                {t("buttons.save")}
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={() => {
-                  stepsForm.steps.gotoStep(stepsForm.steps.currentStep + 1);
-                }}
-              >
-                {t("buttons.nextStep")}
-              </Button>
-            )}
+                <StepButton onClick={() => stepsForm.steps.gotoStep(index)}>
+                  {label}
+                </StepButton>
+              </Step>
+            ))}
+          </Stepper>
+          <Box mt="48px">
+            <form>{stepFormFields[stepsForm.steps.currentStep]}</form>
+          </Box>
+
+          <Divider
+            sx={{
+              margin: '24px 0',
+            }}
+          />
+          <Stack direction="row" justifyContent="space-between">
+            <Button onClick={onModalClose} color="inherit" variant="text">
+              {t('buttons.cancel')}
+            </Button>
+            <Stack direction="row" spacing="8px">
+              {!isFirstStep && (
+                <Button
+                  disabled={isFirstStep}
+                  variant="outlined"
+                  color="inherit"
+                  onClick={() => {
+                    stepsForm.steps.gotoStep(stepsForm.steps.currentStep - 1);
+                  }}
+                >
+                  {t('buttons.previousStep')}
+                </Button>
+              )}
+              {isLastStep ? (
+                <Button {...stepsForm.saveButtonProps} variant="contained">
+                  {t('buttons.save')}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    stepsForm.steps.gotoStep(stepsForm.steps.currentStep + 1);
+                  }}
+                >
+                  {t('buttons.nextStep')}
+                </Button>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </CanAccess>
   );
 };
 
@@ -165,79 +167,28 @@ type UseStepsFormList = {
 
 const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
   const t = useTranslate();
-  const apiUrl = useApiUrl();
 
   const {
-    watch,
     control,
-    setValue,
     formState: { errors },
     refineCore: { formLoading },
   } = stepsForm;
-  const avatarInput: IFile[] | null = watch("avatar");
 
   const { autocompleteProps: storesAutoCompleteProps } =
     useAutocomplete<IStore>({
-      resource: "stores",
+      resource: 'stores',
     });
-
-  const { autocompleteProps: vehiclesAutoCompleteProps } = useAutocomplete({
-    resource: "vehicles",
-  });
-
-  const imageUploadOnChangeHandler = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const target = event.target;
-    const file: File = (target.files as FileList)[0];
-
-    const image = await useImageUpload({
-      apiUrl,
-      file,
-    });
-
-    setValue("avatar", image, { shouldValidate: true });
-  };
 
   const stepPersonal = (
     <Stack gap="24px" key="step-personal">
-      <Controller
-        control={control}
-        name="avatar"
-        defaultValue={null}
-        rules={{
-          required: t("errors.required.field", {
-            field: "avatar",
-          }),
-        }}
-        render={({ field }) => {
-          return (
-            <CourierImageUpload
-              {...field}
-              previewURL={avatarInput?.[0]?.url}
-              showOverlay={false}
-              inputProps={{
-                id: "avatar",
-                onChange: imageUploadOnChangeHandler,
-              }}
-              sx={{
-                margin: "auto",
-              }}
-            />
-          );
-        }}
-      />
-      {errors.avatar && (
-        <FormHelperText error>{errors.avatar.message}</FormHelperText>
-      )}
       <FormControl fullWidth>
         <Controller
           control={control}
           name="name"
           defaultValue=""
           rules={{
-            required: t("errors.required.field", {
-              field: "name",
+            required: t('errors.required.field', {
+              field: 'name',
             }),
           }}
           render={({ field }) => {
@@ -249,15 +200,15 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
                 id="name"
                 required
                 sx={{
-                  "& .MuiInputBase-input": {
+                  '& .MuiInputBase-input': {
                     backgroundColor: ({ palette }) =>
-                      palette.mode === "dark"
-                        ? "#1E1E1E"
+                      palette.mode === 'dark'
+                        ? '#1E1E1E'
                         : palette.background.paper,
                   },
                 }}
-                label={t("couriers.fields.name.label")}
-                placeholder={t("couriers.fields.name.label")}
+                label={t('couriers.fields.name.label')}
+                placeholder={t('couriers.fields.name.label')}
               />
             );
           }}
@@ -265,15 +216,15 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
         {errors.name && (
           <FormHelperText error>{errors.name.message}</FormHelperText>
         )}
-      </FormControl>{" "}
+      </FormControl>{' '}
       <FormControl fullWidth>
         <Controller
           control={control}
           name="email"
           defaultValue=""
           rules={{
-            required: t("errors.required.field", {
-              field: "email",
+            required: t('errors.required.field', {
+              field: 'email',
             }),
           }}
           render={({ field }) => {
@@ -284,8 +235,8 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
                 type="email"
                 id="email"
                 required
-                label={t("couriers.fields.email.label")}
-                placeholder={t("couriers.fields.email.label")}
+                label={t('couriers.fields.email.label')}
+                placeholder={t('couriers.fields.email.label')}
               />
             );
           }}
@@ -297,18 +248,18 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
       <FormControl fullWidth>
         <Controller
           control={control}
-          name="gsm"
+          name="phone"
           defaultValue=""
           rules={{
-            required: t("errors.required.field", {
-              field: "gsm",
+            required: t('errors.required.field', {
+              field: 'phone',
             }),
           }}
           render={({ field }) => {
             return (
               <InputMask
                 {...field}
-                mask="(999) 999 99 99"
+                mask="(399) 999 99 99"
                 disabled={formLoading}
               >
                 {/* @ts-expect-error False alarm */}
@@ -317,20 +268,20 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
                     {...props}
                     required
                     variant="outlined"
-                    id="gsm"
-                    label={t("couriers.fields.gsm.label")}
-                    placeholder={t("couriers.fields.gsm.label")}
+                    id="phone"
+                    label={t('couriers.fields.phone.label')}
+                    placeholder={t('couriers.fields.phone.label')}
                   />
                 )}
               </InputMask>
             );
           }}
         />
-        {errors.gsm && (
-          <FormHelperText error>{errors.gsm.message}</FormHelperText>
+        {errors.phone && (
+          <FormHelperText error>{errors.phone.message}</FormHelperText>
         )}
       </FormControl>
-      <FormControl fullWidth>
+      {/* <FormControl fullWidth>
         <Controller
           control={control}
           name="address"
@@ -356,7 +307,7 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
         {errors.address && (
           <FormHelperText error>{errors.address.message}</FormHelperText>
         )}
-      </FormControl>
+      </FormControl> */}
     </Stack>
   );
 
@@ -367,7 +318,7 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
           control={control}
           name="store"
           rules={{
-            required: "Store required",
+            required: 'Store required',
           }}
           defaultValue={null}
           render={({ field }) => (
@@ -377,17 +328,17 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
               onChange={(_, value) => {
                 field.onChange(value);
               }}
-              getOptionLabel={(item) => {
-                return item.title ? item.title : "";
+              getOptionLabel={item => {
+                return item.name ? item.name : '';
               }}
               isOptionEqualToValue={(option, value) =>
                 value === undefined ||
                 option?.id?.toString() === (value?.id ?? value)?.toString()
               }
-              renderInput={(params) => (
+              renderInput={params => (
                 <TextField
                   {...params}
-                  label={t("couriers.fields.store.label")}
+                  label={t('couriers.fields.store.label')}
                   variant="outlined"
                   error={!!errors.store}
                   required
@@ -400,7 +351,7 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
           <FormHelperText error>{errors.store.message}</FormHelperText>
         )}
       </FormControl>
-      <FormControl fullWidth>
+      {/* <FormControl fullWidth>
         <Controller
           control={control}
           name="accountNumber"
@@ -427,87 +378,17 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
         {errors.accountNumber && (
           <FormHelperText error>{errors.accountNumber.message}</FormHelperText>
         )}
-      </FormControl>
-    </Stack>
-  );
-  const stepVehicle = (
-    <Stack gap="24px" key="step-vehicle">
-      <FormControl fullWidth>
-        <Controller
-          control={control}
-          name="vehicle"
-          rules={{
-            required: "vehicle required",
-          }}
-          defaultValue={null}
-          render={({ field }) => (
-            <Autocomplete
-              {...vehiclesAutoCompleteProps}
-              {...field}
-              onChange={(_, value) => {
-                field.onChange(value);
-              }}
-              getOptionLabel={(item) => {
-                return item.model ? item.model : "";
-              }}
-              isOptionEqualToValue={(option, value) =>
-                value === undefined ||
-                option?.id?.toString() === (value?.id ?? value)?.toString()
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("couriers.fields.vehicle.label")}
-                  variant="outlined"
-                  error={!!errors.vehicle}
-                  required
-                />
-              )}
-            />
-          )}
-        />
-        {errors.vehicle && (
-          <FormHelperText error>{errors.vehicle.message}</FormHelperText>
-        )}
-      </FormControl>
-      <FormControl fullWidth>
-        <Controller
-          control={control}
-          name="licensePlate"
-          defaultValue=""
-          rules={{
-            required: t("errors.required.field", {
-              field: "licensePlate",
-            }),
-          }}
-          render={({ field }) => {
-            return (
-              <TextField
-                {...field}
-                name="licensePlate"
-                required
-                variant="outlined"
-                label={t("couriers.fields.licensePlate.label")}
-                placeholder={t("couriers.fields.licensePlate.label")}
-              />
-            );
-          }}
-        />
-        {errors.licensePlate && (
-          <FormHelperText error>{errors.licensePlate.message}</FormHelperText>
-        )}
-      </FormControl>
+      </FormControl> */}
     </Stack>
   );
 
   const stepTitles = [
-    t("couriers.steps.personal"),
-    t("couriers.steps.company"),
-    t("couriers.steps.vehicle"),
+    t('couriers.steps.personal'),
+    t('couriers.steps.company'),
   ];
 
   return {
     stepTitles,
-    stepFormFields: [stepPersonal, stepCompany, stepVehicle],
+    stepFormFields: [stepPersonal, stepCompany],
   };
 };

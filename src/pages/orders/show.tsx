@@ -1,5 +1,5 @@
-import React from "react";
-import { useShow, useTranslate, useUpdate } from "@refinedev/core";
+import React, { useEffect, useRef } from "react";
+import { useGetIdentity, useInvalidate, useShow, useTranslate, useUpdate } from "@refinedev/core";
 import { ListButton } from "@refinedev/mui";
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -18,10 +18,14 @@ import {
   Card,
 } from "../../components";
 import { RefineListView } from "../../components";
-import type { IOrder } from "../../interfaces";
+import type { IIdentity, IOrder } from "../../interfaces";
 
 export const OrderShow = () => {
   const t = useTranslate();
+  const invalidate = useInvalidate()
+  const timer = useRef<NodeJS.Timeout | null>(null);
+  const { data: user } = useGetIdentity<IIdentity>();
+  const userRole = user?.roleName
 
   const { query: queryResult } = useShow<IOrder>();
   const record = queryResult.data?.data;
@@ -47,6 +51,23 @@ export const OrderShow = () => {
       });
     }
   };
+
+  useEffect(() => {
+
+    if (timer.current) {
+      clearInterval(timer.current);
+    }
+
+    timer.current = setInterval(() => {
+      invalidate({ resource: "orders", invalidates: ["all"] });
+    }, 30000);
+
+    return () => {
+      if (timer.current) {
+        clearInterval(timer.current);
+      }
+    };
+  }, [])
 
   return (
     <>
@@ -124,7 +145,7 @@ export const OrderShow = () => {
                 },
               }}
             >
-              <OrderDeliveryMap order={record} />
+              <OrderDeliveryMap order={record} userRole={userRole} />
             </Card>
             <Paper
               sx={{

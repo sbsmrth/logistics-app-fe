@@ -14,6 +14,7 @@ import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import type { IStore } from "../../../interfaces";
 import { StoreStatus } from "../status";
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
 
 type Props = {
   store?: IStore;
@@ -21,7 +22,7 @@ type Props = {
 
 export const StoreInfoCard = (props: Props) => {
   const t = useTranslate();
-  const { address, email, isActive, gsm } = props?.store || {};
+  const { address, zipCode, capacity, status } = props?.store || {};
 
   return (
     <Paper>
@@ -34,28 +35,28 @@ export const StoreInfoCard = (props: Props) => {
           />
         }
         label={t("products.fields.isActive.label")}
-        value={<StoreStatus value={isActive || false} size="small" />}
+        value={<StoreStatus value={status === 'ACTIVE'} size="small" />}
       />
       <Divider />
       <Info
         icon={<PlaceOutlinedIcon />}
         label={t("stores.fields.address")}
-        value={address?.text}
+        value={address}
         sx={{
           height: "80px",
         }}
       />
       <Divider />
       <Info
-        icon={<AccountCircleOutlinedIcon />}
-        label={t("stores.fields.email")}
-        value={email}
+        icon={<FmdGoodIcon />}
+        label={t("stores.fields.zipCode")}
+        value={zipCode}
       />
       <Divider />
       <Info
         icon={<PhoneOutlinedIcon />}
-        label={t("stores.fields.gsm")}
-        value={gsm}
+        label={t("stores.fields.capacity")}
+        value={capacity}
       />
     </Paper>
   );

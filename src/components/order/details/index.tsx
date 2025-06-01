@@ -18,6 +18,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import type { IEvent, IOrder } from "../../../interfaces";
 import Skeleton from "@mui/material/Skeleton";
+import { capitalize } from "../../../utils/strings";
 
 type Props = {
   order?: IOrder;
@@ -39,7 +40,7 @@ export const OrderDetails = ({ order }: Props) => {
         }}
         orientation="vertical"
         activeStep={order?.events.findIndex(
-          (el) => el.status === order?.status?.text,
+          (el) => capitalize(el.status) === capitalize(order?.status?.text),
         )}
       >
         {order?.events.map((event: IEvent, index: number) => (
@@ -50,9 +51,9 @@ export const OrderDetails = ({ order }: Props) => {
                   {event.date && dayjs(event.date).format("L LT")}
                 </Typography>
               }
-              error={event.status === "Cancelled"}
+              error={capitalize(event.status) === "Cancelled"}
             >
-              {event.status}
+              {capitalize(event.status)}
             </StepLabel>
           </Step>
         ))}
@@ -62,16 +63,17 @@ export const OrderDetails = ({ order }: Props) => {
       <Info
         icon={<HistoryToggleOffOutlinedIcon />}
         label={t("orders.fields.deliveryTime")}
-        value={
-          order?.createdAt &&
-          dayjs(order.createdAt).add(30, "minutes").format("HH:mm A")
-        }
+        // value={
+        //   order?.createdAt &&
+        //   dayjs(order.createdAt).add(30, "minutes").format("HH:mm A")
+        // }
+        value={dayjs(order?.deliveryDate).format("hh:mm A")}
       />
       <Divider />
       <Info
         icon={<StoreOutlinedIcon />}
         label={t("orders.fields.store")}
-        value={order?.store?.title}
+        value={order?.store?.name}
       />
       <Divider />
       <Info
@@ -85,7 +87,7 @@ export const OrderDetails = ({ order }: Props) => {
             gap="8px"
           >
             <Avatar
-              src={order?.courier?.avatar?.[0]?.url}
+              src=""
               sx={{
                 width: "32px",
                 height: "32px",

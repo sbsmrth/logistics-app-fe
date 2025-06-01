@@ -18,16 +18,15 @@ type Props = {
 export const useStoreForm = (props: Props) => {
   const form = useForm<IStore, HttpError, IStore>({
     defaultValues: {
-      title: "",
-      isActive: true,
+      name: "",
+      status: 'ACTIVE',
       address: {
         text: "",
-        coordinate: [],
+        latitude: 0,
+        longitude: 0,
       },
       products: [],
-      email: "",
-      createdAt: "",
-      gsm: "",
+      createdAt: new Date(),
     },
     refineCoreProps: {
       action: props.action,
@@ -45,13 +44,13 @@ export const useStoreForm = (props: Props) => {
   });
 
   useEffect(() => {
-    if (store?.address?.coordinate) {
+    if (store?.address) {
       setLatLng({
-        lat: Number(store.address.coordinate?.[0]),
-        lng: Number(store.address.coordinate?.[1]),
+        lat: Number(store.address.latitude),
+        lng: Number(store.address.longitude),
       });
     }
-  }, [store?.address.coordinate?.[0], store?.address.coordinate?.[1]]);
+  }, [store?.address.latitude, store?.address.longitude]);
 
   // we are using these debounced values to get lang and lat from the address text
   // to minimize the number of requests, we are using debounced values
@@ -70,7 +69,8 @@ export const useStoreForm = (props: Props) => {
             lng: data.lng,
           });
 
-          form.setValue("address.coordinate", [lat, lng]);
+          form.setValue("address.latitude", lat);
+          form.setValue("address.longitude", lng);
 
           setLatLng({
             lat,

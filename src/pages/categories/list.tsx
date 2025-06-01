@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { type HttpError, useList, useTranslate } from '@refinedev/core';
+import {
+  CanAccess,
+  type HttpError,
+  useList,
+  useTranslate,
+} from '@refinedev/core';
 import { useDataGrid, CreateButton } from '@refinedev/mui';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +19,7 @@ import {
 } from '../../components';
 import { CategoryDrawerForm } from './create'; // importa tu nuevo componente
 import type { ICategory, IProduct } from '../../interfaces';
+import { Unauthorized } from '../../components/unauthorized';
 
 export const CategoryList = () => {
   const t = useTranslate();
@@ -104,7 +110,7 @@ export const CategoryList = () => {
         width: 116,
         display: 'flex',
         renderCell: function render({ row }) {
-          return <CategoryStatus value={row.isActive!} />;
+          return <CategoryStatus value="ACTIVE" />;
         },
       },
     ],
@@ -112,24 +118,26 @@ export const CategoryList = () => {
   );
 
   return (
-    <RefineListView
-      headerButtons={({ defaultButtons }) => (
-        <Stack direction="row" spacing={1}>
-          {defaultButtons}
-          <CreateButton
-            onClick={() => {
-              const current = new URLSearchParams(searchParams);
-              current.set('drawer', 'create');
-              navigate(`${window.location.pathname}?${current.toString()}`, {
-                replace: true,
-              });
-            }}
-          />
-        </Stack>
-      )}
-    >
-      <DataGrid {...dataGridProps} columns={columns} hideFooter />
-      {isCreateDrawerOpen && <CategoryDrawerForm action="create" />}
-    </RefineListView>
+    <CanAccess resource="categories" action="list" fallback={<Unauthorized />}>
+      <RefineListView
+        headerButtons={({ defaultButtons }) => (
+          <Stack direction="row" spacing={1}>
+            {defaultButtons}
+            <CreateButton
+              onClick={() => {
+                const current = new URLSearchParams(searchParams);
+                current.set('drawer', 'create');
+                navigate(`${window.location.pathname}?${current.toString()}`, {
+                  replace: true,
+                });
+              }}
+            />
+          </Stack>
+        )}
+      >
+        <DataGrid {...dataGridProps} columns={columns} hideFooter />
+        {isCreateDrawerOpen && <CategoryDrawerForm action="create" />}
+      </RefineListView>
+    </CanAccess>
   );
 };
