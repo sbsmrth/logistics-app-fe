@@ -106,41 +106,41 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
     },
   });
 
-  const { refetch: refetchCouriers } = useList<ICourier>({
-    resource: 'couriers',
-    config: {
-      filters: [{ field: 'q', operator: 'contains', value }],
-    },
-    queryOptions: {
-      enabled: false,
-      onSuccess: data => {
-        const courierOptionGroup = data.data.map(item => {
-          return {
-            label: `${item.name}`,
-            avatar: (
-              <Avatar
-                sx={{
-                  width: '32px',
-                  height: '32px',
-                }}
-                src={''}
-              />
-            ),
-            link: `/couriers/edit/${item.id}`,
-            category: t('couriers.couriers'),
-          };
-        });
-        setOptions(prevOptions => [...prevOptions, ...courierOptionGroup]);
-      },
-    },
-  });
+  // const { refetch: refetchCouriers } = useList<ICourier>({
+  //   resource: 'couriers',
+  //   config: {
+  //     filters: [{ field: 'q', operator: 'contains', value }],
+  //   },
+  //   queryOptions: {
+  //     enabled: false,
+  //     onSuccess: data => {
+  //       const courierOptionGroup = data.data.map(item => {
+  //         return {
+  //           label: `${item.name}`,
+  //           avatar: (
+  //             <Avatar
+  //               sx={{
+  //                 width: '32px',
+  //                 height: '32px',
+  //               }}
+  //               src={''}
+  //             />
+  //           ),
+  //           link: `/couriers/edit/${item.id}`,
+  //           category: t('couriers.couriers'),
+  //         };
+  //       });
+  //       setOptions(prevOptions => [...prevOptions, ...courierOptionGroup]);
+  //     },
+  //   },
+  // });
 
   useEffect(() => {
     setOptions([]);
     refetchOrders();
-    refetchCouriers();
+    // refetchCouriers();
     refetchStores();
-  }, [value, refetchOrders, refetchCouriers, refetchStores]);
+  }, [value, refetchOrders, refetchStores]);
 
   const roleName = user?.roleName;
 
@@ -290,7 +290,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
           >
             <Select
               size="small"
-              disableUnderline
+              // disableUnderline
               defaultValue={currentLocale}
               slotProps={{
                 input: {
@@ -353,14 +353,20 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
               alignItems="center"
               justifyContent="center"
             >
+
               <Typography
                 fontSize={{
                   xs: '12px',
                   sm: '14px',
                 }}
                 variant="subtitle2"
+                sx={{
+                  textAlign: 'center'
+                }}
               >
                 {user?.name}
+                <br />
+                {user?.roleName ? ` (${user?.roleName})` : ''}
               </Typography>
               <Avatar src={user?.avatar} alt={user?.name} />
             </Stack>

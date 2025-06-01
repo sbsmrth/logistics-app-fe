@@ -171,7 +171,7 @@ const ProductItems = (props: Props) => {
 
           return (
             <Grid
-              key={product.productId}
+              key={product.productId + product.storeLatitude}
               size={{
                 sm: 3,
                 md: 4,
