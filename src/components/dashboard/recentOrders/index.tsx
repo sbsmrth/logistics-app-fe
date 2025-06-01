@@ -131,7 +131,7 @@ export const RecentOrders: React.FC = () => {
                 style: "currency",
                 notation: "standard",
               }}
-              value={row.amount}
+              value={row.subtotal}
             />
           );
         },

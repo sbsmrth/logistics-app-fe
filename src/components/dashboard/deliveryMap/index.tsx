@@ -41,8 +41,8 @@ export const DeliveryMap: React.FC = () => {
               url: "/images/marker-courier.svg",
             }}
             position={{
-              lat: Number(order.adress.coordinate[0]),
-              lng: Number(order.adress.coordinate[1]),
+              lat: Number(order.address.latitude ?? 0),
+              lng: Number(order.address.longitude ?? 0),
             }}
           />
         );
@@ -56,8 +56,8 @@ export const DeliveryMap: React.FC = () => {
               url: "/images/marker-location.svg",
             }}
             position={{
-              lat: Number(order.store.address.coordinate[0]),
-              lng: Number(order.store.address.coordinate[1]),
+              lat: Number(order.store.address.latitude ?? 0),
+              lng: Number(order.store.address.longitude ?? 0),
             }}
           />
         );

@@ -24,17 +24,17 @@ export const accessControlProvider: AccessControlProvider = {
     if (!role) return { can: false };
 
     // ADMINISTRADOR tiene acceso total
-    if (role === 'Administrador') return { can: true };
+    if (role === 'ADMINISTRADOR') return { can: true };
 
     // GERENTE tiene acceso a todo menos usuarios y couriers
-    if (role === 'Gerente') {
+    if (role === 'GERENTE') {
       if (resource && ['users', 'couriers'].includes(resource))
         return { can: false };
       return { can: true };
     }
 
     // DESPACHADOR puede ver y gestionar orders, products y categories
-    if (role === 'Despachador') {
+    if (role === 'DESPACHADOR') {
       if (
         resource &&
         ['orders', 'products', 'categories', 'dashboard'].includes(resource)
@@ -45,14 +45,14 @@ export const accessControlProvider: AccessControlProvider = {
     }
 
     // REPARTIDOR solo puede ver couriers (su info)
-    if (role === 'Repartidor') {
+    if (role === 'REPARTIDOR') {
       if (resource === 'couriers' && action === 'list') return { can: true };
       if (resource === 'dashboard') return { can: true };
       return { can: false };
     }
 
     // CLIENTE puede ver solo sus orders, y leer productos y categorías
-    if (role === 'Cliente') {
+    if (role === 'CLIENTE') {
       if (resource === 'orders' && action === 'list' && params?.id) {
         // Aquí podrías filtrar en el backend los pedidos por userId
         return { can: true };
