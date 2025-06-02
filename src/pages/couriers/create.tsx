@@ -70,7 +70,7 @@ export const CourierCreate = () => {
   };
 
   return (
-    <CanAccess resource="products" action="create" fallback={<Unauthorized />}>
+    <CanAccess resource="couriers" action="create" fallback={<Unauthorized />}>
       <Dialog
         open
         sx={{
@@ -184,7 +184,7 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
       <FormControl fullWidth>
         <Controller
           control={control}
-          name="name"
+          name="fullname"
           defaultValue=""
           rules={{
             required: t('errors.required.field', {
@@ -213,8 +213,8 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
             );
           }}
         />
-        {errors.name && (
-          <FormHelperText error>{errors.name.message}</FormHelperText>
+        {errors.fullname && (
+          <FormHelperText error>{errors.fullname.message}</FormHelperText>
         )}
       </FormControl>{' '}
       <FormControl fullWidth>
@@ -281,33 +281,59 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
           <FormHelperText error>{errors.phone.message}</FormHelperText>
         )}
       </FormControl>
-      {/* <FormControl fullWidth>
+
+      <FormControl fullWidth>
         <Controller
           control={control}
-          name="address"
+          name="current_password"
           defaultValue=""
           rules={{
-            required: t("errors.required.field", {
-              field: "address",
+            required: t('errors.required.field', {
+              field: 'password',
             }),
+            minLength: {
+              value: 6,
+              message: t('errors.minLength.field', {
+                field: 'password',
+                length: 6,
+              }),
+            },
           }}
-          render={({ field }) => {
-            return (
-              <TextField
-                {...field}
-                required
-                variant="outlined"
-                id="address"
-                label={t("couriers.fields.address.label")}
-                placeholder={t("couriers.fields.address.label")}
-              />
-            );
-          }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              type="password"
+              variant="outlined"
+              id="password"
+              required
+              label={'Password'}
+              placeholder={'Password'}
+            />
+          )}
         />
-        {errors.address && (
-          <FormHelperText error>{errors.address.message}</FormHelperText>
+        {errors.current_password && (
+          <FormHelperText error>{errors.current_password.message}</FormHelperText>
         )}
-      </FormControl> */}
+      </FormControl>
+
+      <Controller
+        control={control}
+        name="roleId"
+        defaultValue="6808560c7c58de59c8a68618"
+        render={({ field }) => (
+          <input type="hidden" {...field} />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="status"
+        defaultValue="ACTIVE"
+        render={({ field }) => (
+          <input type="hidden" {...field} />
+        )}
+      />
+
     </Stack>
   );
 
@@ -351,34 +377,6 @@ const useStepsFormList = ({ stepsForm }: UseStepsFormList) => {
           <FormHelperText error>{errors.store.message}</FormHelperText>
         )}
       </FormControl>
-      {/* <FormControl fullWidth>
-        <Controller
-          control={control}
-          name="accountNumber"
-          defaultValue=""
-          rules={{
-            min: 10,
-            required: t("errors.required.field", {
-              field: "accountNumber",
-            }),
-          }}
-          render={({ field }) => {
-            return (
-              <TextField
-                {...field}
-                name="accountNumber"
-                required
-                variant="outlined"
-                label={t("couriers.fields.accountNumber.label")}
-                placeholder={t("couriers.fields.accountNumber.label")}
-              />
-            );
-          }}
-        />
-        {errors.accountNumber && (
-          <FormHelperText error>{errors.accountNumber.message}</FormHelperText>
-        )}
-      </FormControl> */}
     </Stack>
   );
 
