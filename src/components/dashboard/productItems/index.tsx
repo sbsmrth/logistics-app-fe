@@ -6,7 +6,7 @@ import {
   type UseDataGridReturnType,
 } from '@refinedev/mui';
 import Typography from '@mui/material/Typography';
-import type { IAvaliableProducts, ICategory } from '../../../interfaces';
+import type { IAvaliableProducts, ICategory, IIdentity } from '../../../interfaces';
 import { useLocation } from 'react-router';
 import { ProductStatus } from '../../product';
 import Grid from '@mui/material/Grid2';
@@ -27,16 +27,9 @@ type Props = {
   categories: ICategory[];
 } & UseDataGridReturnType<IAvaliableProducts>;
 
-export const ProductsWrapper = () => {
-  // const dataGrid = useDataGrid<IProduct>({
-  //   resource: 'products',
-  //   pagination: {
-  //     pageSize: 12,
-  //   },
-  // });
-
+export const ProductsWrapper = ({ user }: { user: IIdentity }) => {
   const dataGrid = useDataGrid<IAvaliableProducts>({
-    resource: 'inventories/available-products',
+    resource: 'inventories/available-products/' + user.cityId,
     pagination: {
       pageSize: 12,
     },

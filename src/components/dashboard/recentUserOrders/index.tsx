@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import {
+  useGetIdentity,
   // UpdatePasswordFormTypes,
   useNavigation,
   useTranslate,
@@ -16,27 +17,18 @@ import {
   GridActionsCellItem,
   type GridColDef,
 } from "@mui/x-data-grid";
-import type { IOrder } from "../../../interfaces";
+import { IIdentity, type IOrder } from "../../../interfaces";
 import { getUniqueListWithCount } from "../../../utils";
 
-export const RecentOrders: React.FC = () => {
+export const RecentUserOrders = ({ user }: { user: IIdentity }) => {
   const t = useTranslate();
   const { show } = useNavigation();
   const { mutate } = useUpdate({
     resource: "orders",
   });
-  // const { mutate: updatePassword } =
-  //   useUpdatePassword<Record<string, string>>();
-
-  // useEffect(() => {
-  //   updatePassword({
-  //     redirectPath: "/custom-url",
-  //     query: "?foo=bar",
-  //   });
-  // }, [updatePassword]);
 
   const { dataGridProps } = useDataGrid<IOrder>({
-    resource: "orders",
+    resource: "orders/user/" + user?.id,
     initialSorter: [
       {
         field: "createdAt",

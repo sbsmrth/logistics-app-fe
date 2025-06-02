@@ -5,3 +5,4 @@ export * from "./trendingMenu";
 export * from "./dailyRevenue";
 export * from "./dailyOrders";
 export * from "./newCustomers";
+export * from "./recentUserOrders";

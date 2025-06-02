@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid2';
 import { NumberField } from '@refinedev/mui';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
@@ -24,6 +25,7 @@ import {
   NewCustomers,
   OrderTimeline,
   RecentOrders,
+  RecentUserOrders,
   TrendingMenu,
 } from '../../components/dashboard';
 import { TrendIcon } from '../../components/icons';
@@ -123,7 +125,7 @@ const AdminDashboard = () => {
               },
             }}
           >
-            {/* <RecentOrders /> !! COMIPATION ERROR */} 
+            {/* <RecentOrders /> !! COMIPATION ERROR */}
           </Card>
         </Grid>
         <Grid
@@ -454,9 +456,81 @@ const GeneralDashboard = () => {
   );
 };
 
+
+const CouriersDashboard = () => {
+  const t = useTranslate();
+
+  const { data: user } = useGetIdentity<IIdentity>();
+
+  return (
+    <>
+      <Grid
+        size={{
+          xs: 24,
+          sm: 24,
+          md: 24,
+          lg: 15,
+          xl: 15,
+        }}
+        sx={{
+          height: '800px',
+        }}
+      >
+        <Card
+          icon={<DeliveryDiningIcon />}
+          title={t('dashboard.recentOrders.title')}
+          cardContentProps={{
+            sx: {
+              height: '688px',
+            },
+          }}
+        >
+          <RecentUserOrders user={user!} />
+        </Card>
+      </Grid>
+    </>
+  )
+}
+
+const UserDashboard = () => {
+  const t = useTranslate();
+
+  const { data: user } = useGetIdentity<IIdentity>();
+  return (
+    <>
+      <ProductsWrapper user={user!} />
+      <Grid
+        size={{
+          xs: 24,
+          sm: 24,
+          md: 24,
+          lg: 15,
+          xl: 15,
+        }}
+        sx={{
+          height: '800px',
+        }}
+      >
+        <Card
+          icon={<ShoppingBagOutlinedIcon />}
+          title={t('dashboard.recentOrders.title')}
+          cardContentProps={{
+            sx: {
+              height: '688px',
+            },
+          }}
+        >
+          <RecentUserOrders user={user!} />
+        </Card>
+      </Grid>
+    </>
+  )
+}
+
 const DASHBOARDS = {
   'ADMINISTRADOR': AdminDashboard,
-  'CLIENTE': ProductsWrapper,
+  'CLIENTE': UserDashboard,
+  'REPARTIDOR': CouriersDashboard,
 };
 
 export const DashboardPage: React.FC = () => {

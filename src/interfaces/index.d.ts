@@ -43,6 +43,7 @@ export interface IIdentity {
   name: string;
   roleName: string;
   avatar: string;
+  cityId: string;
 }
 
 export interface IAddress {
@@ -152,22 +153,26 @@ export interface ICourierStatus {
 
 export interface ICourier {
   id: number;
-  name: string;
+  fullname: string;
   // surname: string;
   email: string;
   gender: string;
   phone: string;
   createdAt: string;
   accountNumber: string;
+  current_password?: string;
   // licensePlate: string;
-  latitude: number;
-  longitude: number;
+  // latitude: number;
+  // longitude: number;
   address: IAddress;
   // avatar: IFile[];
   gsm?: string;
   store: IStore;
-  status: ICourierStatus;
+  // status: ICourierStatus;
+  status: string;
   vehicle: IVehicle;
+  roleId?: string;
+  storeId?: string;
 }
 
 export interface IReview {

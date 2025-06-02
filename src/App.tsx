@@ -77,7 +77,7 @@ const App: React.FC = () => {
                 breadcrumb: false,
                 useNewQueryKeys: true,
               }}
-              notificationProvider={useNotificationProvider}
+              // notificationProvider={useNotificationProvider}
               resources={[
                 {
                   name: 'dashboard',
@@ -140,8 +140,12 @@ const App: React.FC = () => {
                 },
                 {
                   name: 'available-products',
-                  list: '/inventories/available-products',
+                  list: '/inventories/available-products/:cityId',
                 },
+                {
+                  name: 'user-orders',
+                  list: '/orders/user/:id',
+                }
               ]}
               accessControlProvider={accessControlProvider}
             >
