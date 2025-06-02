@@ -112,7 +112,7 @@ export const CustomerShow = () => {
                 style: "currency",
                 notation: "compact",
               }}
-              value={row.amount}
+              value={row.subtotal}
             />
           );
         },

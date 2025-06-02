@@ -51,12 +51,12 @@ export const AllCouriersMap = () => {
             lat: 4.7110,
             lng: -74.0721,
           },
-          zoom: 5,
+          zoom: 7,
         }}
       >
         {couriers.map((courier) => {
-          const lat = Number(courier.latitude);
-          const lng = Number(courier.longitude);
+          const lat = courier.address.latitude
+          const lng = courier.address.longitude
 
           if (!lat || !lng) return null;
 

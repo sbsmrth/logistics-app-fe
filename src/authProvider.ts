@@ -16,6 +16,7 @@ interface DecodedToken {
   role?: {
     name: UserRole;
   };
+  cityId: string;
 }
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
@@ -172,6 +173,7 @@ export const authProvider: AuthProvider = {
         email: decoded.email,
         roleName: decoded.role?.name.toUpperCase(),
         avatar: decoded.avatar || DEFAULT_AVATAR,
+        cityId: decoded.cityId || '1000',
       };
     } catch (error) {
       console.error("Token inválido:", error);

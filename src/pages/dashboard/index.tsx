@@ -24,6 +24,7 @@ import {
   NewCustomers,
   OrderTimeline,
   RecentOrders,
+  RecentUserOrders,
   TrendingMenu,
 } from '../../components/dashboard';
 import { TrendIcon } from '../../components/icons';
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
               },
             }}
           >
-            {/* <RecentOrders /> !! COMIPATION ERROR */} 
+            {/* <RecentOrders /> !! COMIPATION ERROR */}
           </Card>
         </Grid>
         <Grid
@@ -454,9 +455,44 @@ const GeneralDashboard = () => {
   );
 };
 
+const UserDashboard = () => {
+  const t = useTranslate();
+
+  const { data: user } = useGetIdentity<IIdentity>();
+  return (
+    <>
+      <ProductsWrapper user={user!} />
+      <Grid
+        size={{
+          xs: 24,
+          sm: 24,
+          md: 24,
+          lg: 15,
+          xl: 15,
+        }}
+        sx={{
+          height: '800px',
+        }}
+      >
+        <Card
+          icon={<ShoppingBagOutlinedIcon />}
+          title={t('dashboard.recentOrders.title')}
+          cardContentProps={{
+            sx: {
+              height: '688px',
+            },
+          }}
+        >
+          <RecentUserOrders user={user!} />
+        </Card>
+      </Grid>
+    </>
+  )
+}
+
 const DASHBOARDS = {
   'ADMINISTRADOR': AdminDashboard,
-  'CLIENTE': ProductsWrapper,
+  'CLIENTE': UserDashboard,
 };
 
 export const DashboardPage: React.FC = () => {
