@@ -43,6 +43,7 @@ export interface IIdentity {
   name: string;
   roleName: string;
   avatar: string;
+  cityId: string;
 }
 
 export interface IAddress {
@@ -160,8 +161,8 @@ export interface ICourier {
   createdAt: string;
   accountNumber: string;
   // licensePlate: string;
-  latitude: number;
-  longitude: number;
+  // latitude: number;
+  // longitude: number;
   address: IAddress;
   // avatar: IFile[];
   gsm?: string;
