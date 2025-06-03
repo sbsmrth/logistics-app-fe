@@ -6,8 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000", // URL del backend
-        changeOrigin: true, // Cambia el origen para evitar problemas de CORS
+        target: "http://localhost:3000", 
+        changeOrigin: true, 
       },
     },
   },
