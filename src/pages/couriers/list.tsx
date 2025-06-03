@@ -19,6 +19,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { AllCouriersMap } from "../../components/courier/map/all-couriers-map";
+import { CourierHistoryMap } from "../../components/courier/courier-history-map/index"; // Importa el componente
 import { type PropsWithChildren } from "react";
 
 import {
@@ -28,16 +29,24 @@ import {
 } from "../../components";
 import type { ICourier } from "../../interfaces";
 import { Unauthorized } from "../../components/unauthorized";
-import { Button } from "@mui/material";
+import { Button, Modal, TextField } from "@mui/material";
 import { useFileExport } from "../../hooks/useFileExport/index";
 
 type View = "table" | "map";
 
-export const CourierList = ({children}: PropsWithChildren) => {
+export const CourierList = ({ children }: PropsWithChildren) => {
   const [view, setView] = useState<View>(() => {
     const stored = localStorage.getItem("courier-view") as View;
     return stored || "table";
   });
+
+  const [selectedCourier, setSelectedCourier] = useState<number | null>(null);
+  const [dateRange, setDateRange] = useState({
+    from: new Date().toISOString().slice(0, 19), // Fecha actual con formato para datetime-local
+    to: new Date(new Date().setHours(23, 59, 59)).toISOString().slice(0, 19), // Fecha actual con hora final del día
+  });
+  const [locations, setLocations] = useState<{ lat: number; lng: number; timestamp: string }[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const go = useGo();
   const { pathname } = useLocation();
@@ -59,6 +68,28 @@ export const CourierList = ({children}: PropsWithChildren) => {
     replace(""); // Limpia filtros/paginación
     setView(newView);
     localStorage.setItem("courier-view", newView);
+  };
+
+  const fetchCourierHistory = async () => {
+    if (!selectedCourier || !dateRange.from || !dateRange.to) return;
+
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL; // Obtiene la URL base desde el archivo .env
+
+      // Formatea las fechas al formato ISO 8601 con precisión de milisegundos y zona horaria
+      const formattedFrom = new Date(dateRange.from).toISOString();
+      const formattedTo = new Date(dateRange.to).toISOString();
+
+      const response = await fetch(
+        `${baseUrl}/location/${selectedCourier}/history/${encodeURIComponent(formattedFrom)}/${encodeURIComponent(formattedTo)}`
+      );
+
+      console.log("Fetching courier history from:", `${baseUrl}/location/${selectedCourier}/history/${encodeURIComponent(formattedFrom)}/${encodeURIComponent(formattedTo)}`);
+      const data = await response.json();
+      setLocations(data);
+    } catch (error) {
+      console.error("Error fetching courier history:", error);
+    }
   };
 
   const columns = useMemo<GridColDef<ICourier>[]>(() => [
@@ -128,6 +159,23 @@ export const CourierList = ({children}: PropsWithChildren) => {
       ),
     },
     {
+      field: "history",
+      headerName: "History",
+      width: 200,
+      renderCell: ({ row }) => (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => {
+            setSelectedCourier(row.id);
+            setIsModalOpen(true);
+          }}
+        >
+          View History
+        </Button>
+      ),
+    },
+    {
       field: "actions",
       headerName: t("table.actions"),
       type: "actions",
@@ -188,17 +236,69 @@ export const CourierList = ({children}: PropsWithChildren) => {
               columns={columns}
               pageSizeOptions={[10, 20, 50, 100]}
             />
-          )
-          }
-          {
-            view === "map" && (
-              <Box sx={{ height: "calc(100dvh - 232px)", marginTop: "32px" }}>
-                <AllCouriersMap />
-              </Box>
-            )
-          }
+          )}
+          {view === "map" && (
+            <Box sx={{ height: "calc(100dvh - 232px)", marginTop: "32px" }}>
+              <AllCouriersMap />
+            </Box>
+          )}
         </>
       </RefineListView>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: "80%",
+            height: "80%",
+            backgroundColor: "white",
+            borderRadius: 2,
+            boxShadow: 24,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box sx={{ padding: 2, borderBottom: "1px solid #ddd" }}>
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              View Courier History
+            </Typography>
+            <Box display="flex" gap={2}>
+              <TextField
+                label="From"
+                type="datetime-local"
+                value={dateRange.from}
+                onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
+                fullWidth
+              />
+              <TextField
+                label="To"
+                type="datetime-local"
+                value={dateRange.to}
+                onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
+                fullWidth
+              />
+              <Button
+                variant="contained"
+                onClick={fetchCourierHistory}
+                disabled={isLoading}
+                sx={{ alignSelf: "center", height: "56px" }}
+              >
+                Fetch History
+              </Button>
+            </Box>
+          </Box>
+          <Box sx={{ flex: 1, position: "relative" }}>
+            <CourierHistoryMap locations={locations} />
+          </Box>
+        </Box>
+      </Modal>
       {children}
     </CanAccess>
   );
