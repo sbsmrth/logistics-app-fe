@@ -55,7 +55,7 @@ export const OrderDeliveryMap = ({ order, userRole }: Props) => {
           }}
         />
       )}
-      {userRole === 'REPARTIDOR' && (
+      {userRole === 'REPARTIDOR' || userRole === 'ADMINISTRADOR' && (
         <RouteDrawer
           origin={{ lat: order?.courier?.address?.latitude!, lng: order?.courier?.address?.longitude! }}
           destination={{ lat: order?.address?.latitude!, lng: order?.address?.longitude! }}
