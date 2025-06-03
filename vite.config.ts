@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000", // URL del backend
+        target: "https://logistics-app-be-4.onrender.com", // URL del backend
         changeOrigin: true, // Cambia el origen para evitar problemas de CORS
       },
     },
