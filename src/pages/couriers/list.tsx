@@ -19,6 +19,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { AllCouriersMap } from "../../components/courier/map/all-couriers-map";
+import { type PropsWithChildren } from "react";
 
 import {
   CourierRating,
@@ -32,7 +33,7 @@ import { useFileExport } from "../../hooks/useFileExport/index";
 
 type View = "table" | "map";
 
-export const CourierList = () => {
+export const CourierList = ({children}: PropsWithChildren) => {
   const [view, setView] = useState<View>(() => {
     const stored = localStorage.getItem("courier-view") as View;
     return stored || "table";
@@ -143,7 +144,7 @@ export const CourierList = () => {
   return (
     <CanAccess resource="couriers" action="list" fallback={<Unauthorized />}>
       <RefineListView
-        headerButtons={(props) => [
+        headerButtons={() => [
           <ToggleButtonGroup
             key="view-toggle"
             value={view}
@@ -166,29 +167,39 @@ export const CourierList = () => {
             onClick={() => {
               go({
                 to: `${createUrl("couriers")}`,
-                query: { to: pathname },
-                options: { keepQuery: true },
+                query: {
+                  to: pathname,
+                },
+                options: {
+                  keepQuery: true,
+                },
                 type: "replace",
               });
             }}
-            {...props.createButtonProps}
           >
             {t("couriers.actions.add")}
           </CreateButton>,
         ]}
       >
-        {view === "table" ? (
-          <DataGrid
-            {...dataGridProps}
-            columns={columns}
-            pageSizeOptions={[10, 20, 50, 100]}
-          />
-        ) : (
-          <Box sx={{ height: "calc(100dvh - 232px)", marginTop: "32px" }}>
-            <AllCouriersMap />
-          </Box>
-        )}
+        <>
+          {view === "table" && (
+            <DataGrid
+              {...dataGridProps}
+              columns={columns}
+              pageSizeOptions={[10, 20, 50, 100]}
+            />
+          )
+          }
+          {
+            view === "map" && (
+              <Box sx={{ height: "calc(100dvh - 232px)", marginTop: "32px" }}>
+                <AllCouriersMap />
+              </Box>
+            )
+          }
+        </>
       </RefineListView>
+      {children}
     </CanAccess>
   );
 };
