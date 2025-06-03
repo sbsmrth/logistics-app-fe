@@ -8,7 +8,7 @@ export const useSendLocation = () => {
   const apiUrl = useApiUrl();
 
   useEffect(() => {
-    if (user?.roleName !== 'CLIENTE') {
+    if (user?.roleName !== 'REPARTIDOR') {
       if (intervalRef.current) clearInterval(intervalRef.current);
       return;
     }

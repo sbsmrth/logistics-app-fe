@@ -41,6 +41,7 @@ import { StoreUpload } from './pages/stores/upload';
 import { accessControlProvider } from './accessControlProvider';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
+console.log('API_URL', API_URL);
 // const API_URL = 'https://api.finefoods.refine.dev';
 
 const App: React.FC = () => {
