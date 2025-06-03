@@ -7,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 import { green } from "@mui/material/colors";
 
 type Props = {
-  value: IProduct["isActive"];
+  value: IProduct["status"];
   size?: ChipProps["size"];
 };
 
@@ -34,7 +34,7 @@ export const CategoryStatus = (props: Props) => {
 
   return (
     <Chip
-      label={t(`categories.fields.isActive.${props.value}`)}
+      label="ACTIVE"
       icon={icon}
       sx={{
         borderColor: color,

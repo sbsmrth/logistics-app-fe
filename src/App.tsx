@@ -1,45 +1,47 @@
-import { Authenticated, Refine } from "@refinedev/core";
-import { KBarProvider } from "@refinedev/kbar";
+import { Authenticated, Refine } from '@refinedev/core';
+import { KBarProvider } from '@refinedev/kbar';
 import {
   ErrorComponent,
   useNotificationProvider,
   ThemedLayoutV2,
   RefineSnackbarProvider,
-} from "@refinedev/mui";
-import GlobalStyles from "@mui/material/GlobalStyles";
-import CssBaseline from "@mui/material/CssBaseline";
-import dataProvider from "@refinedev/simple-rest";
+} from '@refinedev/mui';
+import GlobalStyles from '@mui/material/GlobalStyles';
+import CssBaseline from '@mui/material/CssBaseline';
+import dataProvider from '@refinedev/simple-rest';
 import routerProvider, {
   CatchAllNavigate,
   NavigateToResource,
   UnsavedChangesNotifier,
   DocumentTitleHandler,
-} from "@refinedev/react-router";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router";
-import { useTranslation } from "react-i18next";
-import MopedOutlined from "@mui/icons-material/MopedOutlined";
-import Dashboard from "@mui/icons-material/Dashboard";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
-import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
-import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
-import Box from "@mui/material/Box";
-import { authProvider } from "./authProvider";
-import { DashboardPage } from "./pages/dashboard";
-import { OrderList, OrderShow } from "./pages/orders";
-import { CustomerShow, CustomerList } from "./pages/customers";
-import { CourierList, CourierCreate, CourierEdit } from "./pages/couriers";
-import { AuthPage } from "./pages/auth";
-import { StoreList, StoreEdit, StoreCreate } from "./pages/stores";
-import { ProductEdit, ProductList, ProductCreate } from "./pages/products";
-import { CategoryList } from "./pages/categories";
-import { ColorModeContextProvider } from "./contexts";
-import { Header, Title } from "./components";
-import { useAutoLoginForDemo } from "./hooks";
-import { StoreUpload } from "./pages/stores/upload";
+} from '@refinedev/react-router';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import MopedOutlined from '@mui/icons-material/MopedOutlined';
+import Dashboard from '@mui/icons-material/Dashboard';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import FastfoodOutlinedIcon from '@mui/icons-material/FastfoodOutlined';
+import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
+import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined';
+import Box from '@mui/material/Box';
+import { authProvider } from './authProvider';
+import { DashboardPage } from './pages/dashboard';
+import { OrderList, OrderShow } from './pages/orders';
+import { CustomerShow, CustomerList } from './pages/customers';
+import { CourierList, CourierCreate, CourierEdit } from './pages/couriers';
+import { AuthPage } from './pages/auth';
+import { StoreList, StoreEdit, StoreCreate } from './pages/stores';
+import { ProductEdit, ProductList, ProductCreate } from './pages/products';
+import { CategoryList } from './pages/categories';
+import { ColorModeContextProvider } from './contexts';
+import { Header, Title } from './components';
+import { useAutoLoginForDemo } from './hooks';
+import { StoreUpload } from './pages/stores/upload';
+import { accessControlProvider } from './accessControlProvider';
 
-const API_URL = "https://api.finefoods.refine.dev";
+const API_URL = import.meta.env.VITE_API_BASE_URL;
+// const API_URL = 'https://api.finefoods.refine.dev';
 
 const App: React.FC = () => {
   // This hook is used to automatically login the user.
@@ -62,7 +64,7 @@ const App: React.FC = () => {
       <KBarProvider>
         <ColorModeContextProvider>
           <CssBaseline />
-          <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+          <GlobalStyles styles={{ html: { WebkitFontSmoothing: 'auto' } }} />
           <RefineSnackbarProvider>
             <Refine
               routerProvider={routerProvider}
@@ -75,68 +77,77 @@ const App: React.FC = () => {
                 breadcrumb: false,
                 useNewQueryKeys: true,
               }}
-              notificationProvider={useNotificationProvider}
+              // notificationProvider={useNotificationProvider}
               resources={[
                 {
-                  name: "dashboard",
-                  list: "/",
+                  name: 'dashboard',
+                  list: '/',
                   meta: {
-                    label: "Dashboard",
+                    label: 'Dashboard',
                     icon: <Dashboard />,
                   },
                 },
                 {
-                  name: "orders",
-                  list: "/orders",
-                  show: "/orders/:id",
+                  name: 'orders',
+                  list: '/orders',
+                  show: '/orders/:id',
                   meta: {
                     icon: <ShoppingBagOutlinedIcon />,
                   },
                 },
                 {
-                  name: "users",
-                  list: "/customers",
-                  show: "/customers/:id",
+                  name: 'users',
+                  list: '/customers',
+                  show: '/customers/:id',
                   meta: {
                     icon: <AccountCircleOutlinedIcon />,
                   },
                 },
                 {
-                  name: "products",
-                  list: "/products",
-                  create: "/products/new",
-                  edit: "/products/:id/edit",
-                  show: "/products/:id",
+                  name: 'products',
+                  list: '/products',
+                  create: '/products/new',
+                  edit: '/products/:id/edit',
+                  show: '/products/:id',
                   meta: {
                     icon: <FastfoodOutlinedIcon />,
                   },
                 },
                 {
-                  name: "categories",
-                  list: "/categories",
+                  name: 'categories',
+                  list: '/categories',
                   meta: {
                     icon: <LabelOutlinedIcon />,
                   },
                 },
                 {
-                  name: "stores",
-                  list: "/stores",
-                  create: "/stores/new",
-                  edit: "/stores/:id/edit",
+                  name: 'stores',
+                  list: '/stores',
+                  create: '/stores/new',
+                  edit: '/stores/:id/edit',
                   meta: {
                     icon: <StoreOutlinedIcon />,
                   },
                 },
                 {
-                  name: "couriers",
-                  list: "/couriers",
-                  create: "/couriers/new",
-                  edit: "/couriers/:id/edit",
+                  name: 'couriers',
+                  list: '/couriers',
+                  create: '/couriers/new',
+                  edit: '/couriers/:id/edit',
                   meta: {
                     icon: <MopedOutlined />,
                   },
                 },
+                {
+                  name: 'available-products',
+                  list: '/inventories/available-products/:cityId',
+                },
+                {
+                  name: 'user-orders',
+                  list: '/orders/user/:id',
+                }
               ]}
+              accessControlProvider={accessControlProvider}
             >
               <Routes>
                 <Route
@@ -148,9 +159,9 @@ const App: React.FC = () => {
                       <ThemedLayoutV2 Header={Header} Title={Title}>
                         <Box
                           sx={{
-                            maxWidth: "1200px",
-                            marginLeft: "auto",
-                            marginRight: "auto",
+                            maxWidth: '1200px',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
                           }}
                         >
                           <Outlet />
@@ -227,8 +238,8 @@ const App: React.FC = () => {
                         type="login"
                         formProps={{
                           defaultValues: {
-                            email: "demo@refine.dev",
-                            password: "demodemo",
+                            email: '',
+                            password: '',
                           },
                         }}
                       />
@@ -241,8 +252,8 @@ const App: React.FC = () => {
                         type="register"
                         formProps={{
                           defaultValues: {
-                            email: "demo@refine.dev",
-                            password: "demodemo",
+                            email: '',
+                            password: '',
                           },
                         }}
                       />
@@ -255,16 +266,17 @@ const App: React.FC = () => {
                         type="forgotPassword"
                         formProps={{
                           defaultValues: {
-                            email: "demo@refine.dev",
+                            email: '',
                           },
                         }}
                       />
                     }
                   />
                   <Route
-                    path="/update-password"
+                    path="/reset-password"
                     element={<AuthPage type="updatePassword" />}
                   />
+                  <Route path="/verify" element={<AuthPage type="verify" />} />
                 </Route>
 
                 <Route

@@ -29,21 +29,63 @@
       },
       "buttons": {
         "submit": "Send reset instructions"
-      }
+      },
+      "success": "We have sent you an email with instructions to reset your password."
     },
     "register": {
       "title": "Sign up for your account",
       "fields": {
         "email": "Email",
-        "password": "Password"
+        "password": "Password",
+        "fullName": "Full Name"
       },
       "errors": {
-        "validEmail": "Invalid email address"
+        "validEmail": "Invalid email address",
+        "validUsername": "Invalid username",
+        "validPassword": "Invalid password",
+        "requiredName": "Full name is required",
+        "generic": "Error while creating your account. Please try again later"
       },
       "buttons": {
         "submit": "Register",
         "haveAccount": "Have an account?"
-      }
+      },
+      "success": "Your acount has been created"
+    },
+    "categories": {
+      "title": "Categories",
+      "fields": {
+        "name": "Name",
+        "description": "Description",
+        "products": "Products",
+        "isActive": {
+          "ACTIVE": "ACTIVE"
+        }
+      },
+      "errors": {
+        "validName": "Invalid name",
+        "validDescription": "Invalid description"
+      },
+      "buttons": {
+        "submit": "Create Category"
+      },
+      "new": "New Category"
+    },
+    "verify": {
+      "title": "Verify your email",
+      "subtitle": "We have sent a verification code to your email address.",
+      "fields": {
+        "email": "Email",
+        "code": "Verification code"
+      },
+      "errors": {
+        "validCode": "Invalid verification code"
+      },
+      "buttons": {
+        "submit": "Verify",
+        "resendCode": "Resend code"
+      },
+      "success": "Your email has been verified"
     },
     "updatePassword": {
       "title": "Update password",
@@ -168,9 +210,9 @@
         "male": "Male",
         "female": "Female"
       },
-      "gsm": {
-        "label": "Gsm",
-        "placeholder": "Please enter courier gsm"
+      "phone": {
+        "label": "Phone",
+        "placeholder": "Please enter courier phone"
       },
       "email": {
         "label": "Email",
@@ -216,6 +258,9 @@
       "accountNumber": {
         "label": "Account No",
         "placeholder": "Please enter account no"
+      },
+      "download": {
+        "label": "Download"
       }
     },
     "filter": {
@@ -245,7 +290,9 @@
     },
     "actions": {
       "add": "Add new courier",
-      "edit": "Edit courier"
+      "edit": "Edit courier",
+      "downloadPdf": "PDF",
+      "downloadExcel": "Excel"
     }
   },
   "dashboard": {
@@ -406,7 +453,8 @@
         "description": "Upload Image",
         "validation": "must be 1080x1080 px"
       },
-      "createdAt": "CreatedAt"
+      "createdAt": "CreatedAt",
+      "imageUrl": "Image URL"
     },
     "filter": {
       "title": "Filters",
@@ -477,7 +525,9 @@
       "createdAt": "CreatedAt",
       "address": "Address",
       "email": "Email",
-      "gsm": "Phone"
+      "gsm": "Phone",
+      "capacity": "Capacity",
+      "zipCode": "Zip Code"
     },
     "filter": {
       "id": {

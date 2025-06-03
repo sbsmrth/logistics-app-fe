@@ -1,34 +1,35 @@
-import { useState, useEffect, useContext, type ReactNode } from "react";
+import { useState, useEffect, useContext, type ReactNode } from 'react';
 import {
   useList,
   useTranslate,
   useGetIdentity,
   useGetLocale,
   useSetLocale,
-} from "@refinedev/core";
+} from '@refinedev/core';
 import {
   type RefineThemedLayoutV2HeaderProps,
   HamburgerMenu,
-} from "@refinedev/mui";
-import AppBar from "@mui/material/AppBar";
-import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Toolbar from "@mui/material/Toolbar";
-import Box from "@mui/material/Box";
-import Autocomplete from "@mui/material/Autocomplete";
-import Stack from "@mui/material/Stack";
-import FormControl from "@mui/material/FormControl";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import i18n from "../../i18n";
-import type { IOrder, IStore, ICourier, IIdentity } from "../../interfaces";
-import { ColorModeContext } from "../../contexts";
+} from '@refinedev/mui';
+import AppBar from '@mui/material/AppBar';
+import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Toolbar from '@mui/material/Toolbar';
+import Box from '@mui/material/Box';
+import Autocomplete from '@mui/material/Autocomplete';
+import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import SearchOutlined from '@mui/icons-material/SearchOutlined';
+import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import i18n from '../../i18n';
+import type { IOrder, IStore, ICourier, IIdentity } from '../../interfaces';
+import { ColorModeContext } from '../../contexts';
+import { ProductsCart } from './user/products-cart';
+import { useSendLocation } from '../../hooks/useSendLocation';
 
 interface IOptions {
   label: string;
@@ -38,105 +39,110 @@ interface IOptions {
 }
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
   const [options, setOptions] = useState<IOptions[]>([]);
 
   const { mode, setMode } = useContext(ColorModeContext);
 
+  useSendLocation();
+
   const changeLanguage = useSetLocale();
   const locale = useGetLocale();
   const currentLocale = locale();
-  const { data: user } = useGetIdentity<IIdentity | null>();
+  const { data: user } = useGetIdentity<IIdentity>();
 
   const t = useTranslate();
 
   const { refetch: refetchOrders } = useList<IOrder>({
-    resource: "orders",
+    resource: 'orders',
     config: {
-      filters: [{ field: "q", operator: "contains", value }],
+      filters: [{ field: 'q', operator: 'contains', value }],
     },
     queryOptions: {
       enabled: false,
-      onSuccess: (data) => {
-        const orderOptionGroup: IOptions[] = data.data.map((item) => {
+      onSuccess: data => {
+        const orderOptionGroup: IOptions[] = data.data.map(item => {
           return {
-            label: `${item.store.title} / #${item.orderNumber}`,
+            label: `${item.store.name} / #${item.orderNumber}`,
             link: `/orders/show/${item.id}`,
-            category: t("orders.orders"),
+            category: t('orders.orders'),
             avatar: (
               <Avatar
                 variant="rounded"
                 sx={{
-                  width: "32px",
-                  height: "32px",
+                  width: '32px',
+                  height: '32px',
                 }}
-                src={item.products?.[0]?.images?.[0]?.url}
+                src={item.products?.[0]?.imageUrl}
               />
             ),
           };
         });
         if (orderOptionGroup.length > 0) {
-          setOptions((prevOptions) => [...prevOptions, ...orderOptionGroup]);
+          setOptions(prevOptions => [...prevOptions, ...orderOptionGroup]);
         }
       },
     },
   });
 
   const { refetch: refetchStores } = useList<IStore>({
-    resource: "stores",
+    resource: 'stores',
     config: {
-      filters: [{ field: "q", operator: "contains", value }],
+      filters: [{ field: 'q', operator: 'contains', value }],
     },
     queryOptions: {
       enabled: false,
-      onSuccess: (data) => {
-        const storeOptionGroup = data.data.map((item) => {
+      onSuccess: data => {
+        const storeOptionGroup = data.data.map(item => {
           return {
-            label: `${item.title} - ${item.address.text}`,
+            // label: `${item.name} - ${item.address.text}`,
+            label: `${item.name} - Address`,
             link: `/stores/edit/${item.id}`,
-            category: t("stores.stores"),
+            category: t('stores.stores'),
           };
         });
-        setOptions((prevOptions) => [...prevOptions, ...storeOptionGroup]);
+        setOptions(prevOptions => [...prevOptions, ...storeOptionGroup]);
       },
     },
   });
 
-  const { refetch: refetchCouriers } = useList<ICourier>({
-    resource: "couriers",
-    config: {
-      filters: [{ field: "q", operator: "contains", value }],
-    },
-    queryOptions: {
-      enabled: false,
-      onSuccess: (data) => {
-        const courierOptionGroup = data.data.map((item) => {
-          return {
-            label: `${item.name}`,
-            avatar: (
-              <Avatar
-                sx={{
-                  width: "32px",
-                  height: "32px",
-                }}
-                src={item.avatar?.[0]?.url}
-              />
-            ),
-            link: `/couriers/edit/${item.id}`,
-            category: t("couriers.couriers"),
-          };
-        });
-        setOptions((prevOptions) => [...prevOptions, ...courierOptionGroup]);
-      },
-    },
-  });
+  // const { refetch: refetchCouriers } = useList<ICourier>({
+  //   resource: 'couriers',
+  //   config: {
+  //     filters: [{ field: 'q', operator: 'contains', value }],
+  //   },
+  //   queryOptions: {
+  //     enabled: false,
+  //     onSuccess: data => {
+  //       const courierOptionGroup = data.data.map(item => {
+  //         return {
+  //           label: `${item.name}`,
+  //           avatar: (
+  //             <Avatar
+  //               sx={{
+  //                 width: '32px',
+  //                 height: '32px',
+  //               }}
+  //               src={''}
+  //             />
+  //           ),
+  //           link: `/couriers/edit/${item.id}`,
+  //           category: t('couriers.couriers'),
+  //         };
+  //       });
+  //       setOptions(prevOptions => [...prevOptions, ...courierOptionGroup]);
+  //     },
+  //   },
+  // });
 
   useEffect(() => {
     setOptions([]);
     refetchOrders();
-    refetchCouriers();
+    // refetchCouriers();
     refetchStores();
-  }, [value, refetchOrders, refetchCouriers, refetchStores]);
+  }, [value, refetchOrders, refetchStores]);
+
+  const roleName = user?.roleName;
 
   return (
     <AppBar
@@ -144,20 +150,20 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
       position="sticky"
       elevation={0}
       sx={{
-        "& .MuiToolbar-root": {
-          minHeight: "64px",
+        '& .MuiToolbar-root': {
+          minHeight: '64px',
         },
-        height: "64px",
-        borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-        backgroundColor: (theme) => theme.palette.background.paper,
+        height: '64px',
+        borderBottom: theme => `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme => theme.palette.background.paper,
       }}
     >
       <Toolbar
         sx={{
           paddingLeft: {
-            xs: "0",
-            sm: "16px",
-            md: "24px",
+            xs: '0',
+            sm: '16px',
+            md: '24px',
           },
         }}
       >
@@ -165,11 +171,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
           minWidth="40px"
           minHeight="40px"
           marginRight={{
-            xs: "0",
-            sm: "16px",
+            xs: '0',
+            sm: '16px',
           }}
           sx={{
-            "& .MuiButtonBase-root": {
+            '& .MuiButtonBase-root': {
               marginLeft: 0,
               marginRight: 0,
             },
@@ -184,8 +190,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
           justifyContent="space-between"
           alignItems="center"
           gap={{
-            xs: "8px",
-            sm: "24px",
+            xs: '8px',
+            sm: '24px',
           }}
         >
           <Stack direction="row" flex={1}>
@@ -195,17 +201,17 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
               }}
               id="search-autocomplete"
               options={options}
-              filterOptions={(x) => x}
+              filterOptions={x => x}
               disableClearable
               freeSolo
               fullWidth
               size="small"
               onInputChange={(event, value) => {
-                if (event?.type === "change") {
+                if (event?.type === 'change') {
                   setValue(value);
                 }
               }}
-              groupBy={(option) => option.category}
+              groupBy={option => option.category}
               renderOption={(props, option: IOptions) => {
                 return (
                   <Link href={option.link} underline="none">
@@ -213,18 +219,18 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                       {...props}
                       component="li"
                       sx={{
-                        display: "flex",
-                        padding: "10px",
-                        alignItems: "center",
-                        gap: "10px",
+                        display: 'flex',
+                        padding: '10px',
+                        alignItems: 'center',
+                        gap: '10px',
                       }}
                     >
                       {option?.avatar && option.avatar}
                       <Typography
                         sx={{
                           fontSize: {
-                            md: "14px",
-                            lg: "16px",
+                            md: '14px',
+                            lg: '16px',
                           },
                         }}
                       >
@@ -234,23 +240,23 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                   </Link>
                 );
               }}
-              renderInput={(params) => {
+              renderInput={params => {
                 return (
                   <Box
                     position="relative"
                     sx={{
-                      "& .MuiFormLabel-root": {
-                        paddingRight: "24px",
+                      '& .MuiFormLabel-root': {
+                        paddingRight: '24px',
                       },
                       display: {
-                        xs: "none",
-                        sm: "block",
+                        xs: 'none',
+                        sm: 'block',
                       },
                     }}
                   >
                     <TextField
                       {...params}
-                      label={t("search.placeholder")}
+                      label={t('search.placeholder')}
                       slotProps={{
                         input: {
                           ...params.InputProps,
@@ -259,11 +265,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                     />
                     <IconButton
                       sx={{
-                        position: "absolute",
+                        position: 'absolute',
                         right: 0,
                         top: 0,
-                        "&:hover": {
-                          backgroundColor: "transparent",
+                        '&:hover': {
+                          backgroundColor: 'transparent',
                         },
                       }}
                     >
@@ -278,24 +284,24 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             direction="row"
             alignItems="center"
             spacing={{
-              xs: "8px",
-              sm: "24px",
+              xs: '8px',
+              sm: '24px',
             }}
           >
             <Select
               size="small"
-              disableUnderline
+              // disableUnderline
               defaultValue={currentLocale}
               slotProps={{
                 input: {
-                  "aria-label": "Without label",
+                  'aria-label': 'Without label',
                 },
               }}
               variant="outlined"
               sx={{
                 width: {
-                  xs: "120px",
-                  sm: "160px",
+                  xs: '120px',
+                  sm: '160px',
                 },
               }}
             >
@@ -310,7 +316,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                   value={lang}
                 >
                   <Typography color="text.secondary">
-                    {lang === "en" ? "English" : "German"}
+                    {lang === 'en' ? 'English' : 'German'}
                   </Typography>
                 </MenuItem>
               ))}
@@ -321,38 +327,46 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                 setMode();
               }}
               sx={{
-                backgroundColor: (theme) =>
-                  theme.palette.mode === "dark" ? "transparent" : "#00000014",
+                backgroundColor: theme =>
+                  theme.palette.mode === 'dark' ? 'transparent' : '#00000014',
               }}
             >
-              {mode === "dark" ? (
+              {mode === 'dark' ? (
                 <BrightnessHighIcon />
               ) : (
                 <Brightness4Icon
                   sx={{
-                    fill: "#000000DE",
+                    fill: '#000000DE',
                   }}
                 />
               )}
             </IconButton>
 
+            {roleName === 'CLIENTE' && <ProductsCart userId={user?.id ?? ''} />}
+
             <Stack
               direction="row"
               gap={{
-                xs: "8px",
-                sm: "16px",
+                xs: '8px',
+                sm: '16px',
               }}
               alignItems="center"
               justifyContent="center"
             >
+
               <Typography
                 fontSize={{
-                  xs: "12px",
-                  sm: "14px",
+                  xs: '12px',
+                  sm: '14px',
                 }}
                 variant="subtitle2"
+                sx={{
+                  textAlign: 'center'
+                }}
               >
                 {user?.name}
+                <br />
+                {user?.roleName ? ` (${user?.roleName})` : ''}
               </Typography>
               <Avatar src={user?.avatar} alt={user?.name} />
             </Stack>

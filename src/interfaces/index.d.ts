@@ -1,11 +1,11 @@
 export interface IOrderChart {
   count: number;
   status:
-    | "waiting"
-    | "ready"
-    | "on the way"
-    | "delivered"
-    | "could not be delivered";
+    | 'waiting'
+    | 'ready'
+    | 'on the way'
+    | 'delivered'
+    | 'could not be delivered';
 }
 
 export interface IOrderTotalCount {
@@ -15,13 +15,13 @@ export interface IOrderTotalCount {
 
 export interface ISalesChart {
   date: string;
-  title: "Order Count" | "Order Amount";
+  title: 'Order Count' | 'Order Amount';
   value: number;
 }
 
 export interface IOrderStatus {
   id: number;
-  text: "Pending" | "Ready" | "On The Way" | "Delivered" | "Cancelled";
+  text: 'Pending' | 'Ready' | 'On The Way' | 'Delivered' | 'Cancelled';
 }
 
 export interface IUser {
@@ -38,14 +38,19 @@ export interface IUser {
 }
 
 export interface IIdentity {
-  id: number;
+  id: string;
+  email: string;
   name: string;
+  roleName: string;
   avatar: string;
+  cityId: string;
 }
 
 export interface IAddress {
   text: string;
-  coordinate: [string | number, string | number];
+  coordinate?: [string | number, string | number];
+  latitude: number;
+  longitude: number;
 }
 
 export interface IFile {
@@ -53,7 +58,7 @@ export interface IFile {
   name: string;
   percent?: number;
   size: number;
-  status?: "error" | "success" | "done" | "uploading" | "removed";
+  status?: 'error' | 'success' | 'done' | 'uploading' | 'removed';
   type: string;
   uid?: string;
   url: string;
@@ -65,14 +70,20 @@ export interface IEvent {
 }
 
 export interface IStore {
-  id: number;
-  gsm: string;
-  email: string;
-  title: string;
-  isActive: boolean;
-  createdAt: string;
+   id: number;
+  id_almacen: string;
+  name: string;
   address: IAddress;
-  products: IProduct[];
+  latitude: number;
+  longitude: number;
+  cityId: number;
+  city: City;
+  capacity: number;
+  zipCode: number;
+  status: statusStore;
+  createdAt: Date;
+  updatedAt: Date;
+  products?: IProduct[];
 }
 
 export interface IOrder {
@@ -81,30 +92,44 @@ export interface IOrder {
   createdAt: string;
   products: IProduct[];
   status: IOrderStatus;
-  adress: IAddress;
-  store: IStore;
+  address: IAddress;
+  store: any;
   courier: ICourier;
   events: IEvent[];
   orderNumber: number;
-  amount: number;
+  subtotal: number;
+  deliveryDate?: Date
+  // address?: IAddress;
 }
 
 export interface IProduct {
   id: number;
   name: string;
-  isActive: boolean;
   description: string;
-  images: (IFile & { thumbnailUrl?: string })[];
+  // images: (IFile & { thumbnailUrl?: string })[];
   createdAt: string;
-  price: number;
-  category: ICategory;
-  stock: number;
+  // price: number;
+  categoryId: number;
+  // stock: number;
+
+  // Nuevos campos
+  imageUrl: string; // URL de la imagen del producto
+  weight: number; // en kilogramos
+  dimensionsCm: string; // formato sugerido: "30x20x10"
+  dateOfExpiration: string; // formato ISO (YYYY-MM-DD)
+  requiredRefrigeration: boolean;
+  isFragile: boolean;
+  barCode: string;
+  status: string;
+  unitPrice: number;
+  images?: {url: string, name: string}[]
 }
 
 export interface ICategory {
   id: number;
-  title: string;
-  isActive: boolean;
+  name: string;
+  description: string;
+  isActive?: boolean;
 }
 
 export interface IOrderFilterVariables {
@@ -123,24 +148,31 @@ export interface IUserFilterVariables {
 
 export interface ICourierStatus {
   id: number;
-  text: "Available" | "Offline" | "On delivery";
+  text: 'Available' | 'Offline' | 'On delivery';
 }
 
 export interface ICourier {
   id: number;
-  name: string;
-  surname: string;
+  fullname: string;
+  // surname: string;
   email: string;
   gender: string;
-  gsm: string;
+  phone: string;
   createdAt: string;
   accountNumber: string;
-  licensePlate: string;
-  address: string;
-  avatar: IFile[];
+  current_password?: string;
+  // licensePlate: string;
+  // latitude: number;
+  // longitude: number;
+  address: IAddress;
+  // avatar: IFile[];
+  gsm?: string;
   store: IStore;
-  status: ICourierStatus;
+  // status: ICourierStatus;
+  status: string;
   vehicle: IVehicle;
+  roleId?: string;
+  storeId?: string;
 }
 
 export interface IReview {
@@ -149,7 +181,7 @@ export interface IReview {
   user: IUser;
   star: number;
   createDate: string;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   comment: string[];
 }
 
@@ -171,3 +203,19 @@ export type IVehicle = {
 export type Nullable<T> = {
   [P in keyof T]: T[P] | null;
 };
+
+export interface IAvaliableProducts {
+  storeId: number;
+  storeName: string;
+  storeAddress: string;
+  storeLatitude: number;
+  storeLongitude: number;
+  productId: number;
+  productName: string;
+  productDescription: string;
+  unitPrice: number;
+  imageUrl: string;
+  categoryName: string;
+  categoryId: number;
+  availableQuantity: number;
+}

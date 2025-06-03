@@ -1,4 +1,4 @@
-import { useApiUrl, useTranslate } from '@refinedev/core';
+import { CanAccess, useApiUrl, useTranslate } from '@refinedev/core';
 import { ListButton } from '@refinedev/mui';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Divider from '@mui/material/Divider';
@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Container } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import { Unauthorized } from '../../components/unauthorized';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -62,81 +63,83 @@ export const StoreUpload = () => {
 
   return (
     <>
-      <ListButton
-        variant="outlined"
-        sx={{
-          borderColor: 'GrayText',
-          color: 'GrayText',
-          backgroundColor: 'transparent',
-        }}
-        resource="stores"
-        startIcon={<ArrowBack />}
-      />
-      <Typography
-        variant="h5"
-        component="h5"
-        sx={{ textAlign: 'center', marginTop: '2rem' }}
-      >
-        Load your CSV file with the stores you want to import.
-      </Typography>
-      <Divider
-        sx={{
-          marginBottom: '24px',
-          marginTop: '24px',
-        }}
-      />
-      <Grid container spacing="24px">
-        <Grid
-          size={{
-            xs: 12,
-            md: 12,
-            lg: 12,
+      <CanAccess resource="stores" action="upload" fallback={<Unauthorized />}>
+        <ListButton
+          variant="outlined"
+          sx={{
+            borderColor: 'GrayText',
+            color: 'GrayText',
+            backgroundColor: 'transparent',
           }}
-        ></Grid>
-      </Grid>
-      <Container sx={{ textAlign: 'center' }}>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
+          resource="stores"
+          startIcon={<ArrowBack />}
+        />
+        <Typography
+          variant="h5"
+          component="h5"
+          sx={{ textAlign: 'center', marginTop: '2rem' }}
         >
-          {t('stores.uploadStore')}
-          <VisuallyHiddenInput
-            type="file"
-            multiple={false}
-            accept=".csv"
-            onChange={handleChange}
-          />
-        </Button>
-      </Container>
+          Load your CSV file with the stores you want to import.
+        </Typography>
+        <Divider
+          sx={{
+            marginBottom: '24px',
+            marginTop: '24px',
+          }}
+        />
+        <Grid container spacing="24px">
+          <Grid
+            size={{
+              xs: 12,
+              md: 12,
+              lg: 12,
+            }}
+          ></Grid>
+        </Grid>
+        <Container sx={{ textAlign: 'center' }}>
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            {t('stores.uploadStore')}
+            <VisuallyHiddenInput
+              type="file"
+              multiple={false}
+              accept=".csv"
+              onChange={handleChange}
+            />
+          </Button>
+        </Container>
 
-      <Container
-        sx={{
-          display: 'flex',
-          marginTop: '4rem',
-          width: '100%',
-          justifyContent: 'center',
-        }}
-      >
-        <Stack sx={{ width: '50%' }} spacing={2}>
-          {response.successCount && (
-            <Alert severity="success">
-              {response.successCount} stores were imported successfully.
-            </Alert>
-          )}
-          {response.errors.length > 0 && (
-            <>
-              {response.errors.slice(0, 10).map((error, index) => (
-                <Alert severity="error" key={index}>
-                  {error}
-                </Alert>
-              ))}
-            </>
-          )}
-        </Stack>
-      </Container>
+        <Container
+          sx={{
+            display: 'flex',
+            marginTop: '4rem',
+            width: '100%',
+            justifyContent: 'center',
+          }}
+        >
+          <Stack sx={{ width: '50%' }} spacing={2}>
+            {response.successCount && (
+              <Alert severity="success">
+                {response.successCount} stores were imported successfully.
+              </Alert>
+            )}
+            {response.errors.length > 0 && (
+              <>
+                {response.errors.slice(0, 10).map((error, index) => (
+                  <Alert severity="error" key={index}>
+                    {error}
+                  </Alert>
+                ))}
+              </>
+            )}
+          </Stack>
+        </Container>
+      </CanAccess>
     </>
   );
 };

@@ -40,7 +40,7 @@ export const TrendingMenu: React.FC = () => {
                 width: 72,
                 height: 72,
               }}
-              src={item.product.images[0]?.url}
+              src={item.product?.images[0].url }
             />
             <Box
               sx={{
