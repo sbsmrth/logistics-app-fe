@@ -21,6 +21,8 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import { StoreMap } from '../../store';
 import { useCheckoutForm } from './useCheckoutForm';
+import { useInvalidate } from "@refinedev/core";
+
 
 const PlusIcon = createSvgIcon(
   <svg
@@ -224,6 +226,7 @@ export const CheckoutAddressDialog = ({
   const apiUrl = useApiUrl();
   const { open: notificationOpen } = useNotification();
   const clearProducts = useProductsStore(state => state.clearProducts);
+  const invalidate = useInvalidate()
 
   const handleConfirm = async () => {
     const address = form.getValues('address');
@@ -272,6 +275,7 @@ export const CheckoutAddressDialog = ({
       });
       onClose();
       clearProducts();
+      invalidate({ resource: "orders", invalidates: ["all"] });
     } else {
       notificationOpen?.({
         type: 'error',
