@@ -27,6 +27,8 @@ import {
 } from "../../components";
 import type { ICourier } from "../../interfaces";
 import { Unauthorized } from "../../components/unauthorized";
+import { Button } from "@mui/material";
+import { useFileExport } from "../../hooks/useFileExport/index";
 
 type View = "table" | "map";
 
@@ -46,6 +48,8 @@ export const CourierList = () => {
       pageSize: 10,
     },
   });
+
+  const { isLoading, triggerExport } = useFileExport("couriers");
 
   const handleViewChange = (
     _e: React.MouseEvent<HTMLElement>,
@@ -96,6 +100,31 @@ export const CourierList = () => {
       width: 156,
       headerName: t("couriers.fields.status.label"),
       renderCell: ({ row }) => <CourierStatus value={row?.status} />,
+    },
+    {
+      field: "download",
+      headerName: t("couriers.fields.download.label"),
+      width: 200,
+      renderCell: ({ row }) => (
+        <Box display="flex" gap={1}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => triggerExport("pdf", String(row.id))}
+            disabled={isLoading}
+          >
+            {t("couriers.actions.downloadPdf")}
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => triggerExport("excel", String(row.id))}
+            disabled={isLoading}
+          >
+            {t("couriers.actions.downloadExcel")}
+          </Button>
+        </Box>
+      ),
     },
     {
       field: "actions",

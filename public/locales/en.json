@@ -258,6 +258,9 @@
       "accountNumber": {
         "label": "Account No",
         "placeholder": "Please enter account no"
+      },
+      "download": {
+        "label": "Download"
       }
     },
     "filter": {
@@ -287,7 +290,9 @@
     },
     "actions": {
       "add": "Add new courier",
-      "edit": "Edit courier"
+      "edit": "Edit courier",
+      "downloadPdf": "PDF",
+      "downloadExcel": "Excel"
     }
   },
   "dashboard": {
