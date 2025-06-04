@@ -125,7 +125,7 @@ const AdminDashboard = () => {
               },
             }}
           >
-            {/* <RecentOrders /> !! COMIPATION ERROR */}
+            <RecentOrders />
           </Card>
         </Grid>
         <Grid
