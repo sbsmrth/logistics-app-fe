@@ -27,8 +27,10 @@ export const RecentUserOrders = ({ user }: { user: IIdentity }) => {
     resource: "orders",
   });
 
+  const path = user.roleName === 'CLIENTE' ? 'user' : 'courier';
+
   const { dataGridProps } = useDataGrid<IOrder>({
-    resource: "orders/user/" + user?.id,
+    resource: `orders/${path}/` + user?.id,
     initialSorter: [
       {
         field: "createdAt",
