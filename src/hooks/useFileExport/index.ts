@@ -6,7 +6,8 @@ export const useFileExport = (resource: string) => {
   const triggerExport = async (type: "pdf" | "excel", id: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/${resource}/${id}/${type}`, {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL; // Obtiene la URL base desde el archivo .env
+      const response = await fetch(`${baseUrl}/api/${resource}/${id}/${type}`, {
         method: "GET",
       });
 
